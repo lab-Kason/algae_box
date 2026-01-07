@@ -1,0 +1,6 @@
+timestamp,turbidity_ntu,ph,temperature_c,harvest_ready,collection_triggered,notes
+2026-01-07T11:18:09.471626,9.81,7.48,24.9,False,False,
+2026-01-07T11:19:09.478042,9.93,7.57,24.7,False,False,
+2026-01-07T11:20:09.484607,11.71,7.55,25.4,False,False,
+2026-01-07T11:21:09.488212,10.08,7.56,24.7,False,False,
+2026-01-07T11:22:09.490267,13.69,7.48,25.5,False,False,
