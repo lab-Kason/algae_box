@@ -1,1 +1,2 @@
-pH value/ algae type / turbidity -> ultrasound / light/ sampling(?) 
+sensor:pH value/ algae type / turbidity -> ultrasound / light/ sampling(?)
+mechanism: push-collect / repeat filtering/
