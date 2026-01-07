@@ -1,2 +1,31 @@
 sensor:pH value/ algae type / turbidity -> ultrasound / light/ sampling(?)
 mechanism: push-collect / repeat filtering/
+
+=== PLITT MODEL FOR HYDROCYCLONE SEPARATION ===
+
+Formula for cut size d50c (particle diameter with 50% separation probability):
+
+d50c = [39.7 × Dc^0.46 × Di^0.6 × Do^1.21 × Du^0.71 × exp(0.063φ)] / [h^0.38 × Q^0.45 × (ρs - ρf)^0.5]
+
+VARIABLES (Design Parameters):
+- Dc = Cyclone body diameter (mm) - main chamber diameter
+- Di = Inlet diameter (mm) - where feed enters
+- Do = Overflow/vortex finder diameter (mm) - top outlet for light particles
+- Du = Underflow/apex diameter (mm) - bottom outlet for heavy particles
+- h = Cylindrical section height (mm) - length of main chamber
+
+VARIABLES (Operating Conditions):
+- Q = Volumetric flow rate (L/min) - feed rate
+- φ = Solids concentration (volume %) - algae concentration in feed
+- ρs = Particle density (kg/m³) - density of algae cells
+- ρf = Fluid density (kg/m³) - density of water/medium
+
+OUTPUT:
+- d50c = Cut size (μm) - particle size with 50% separation efficiency
+  * Particles larger than d50c → mostly go to underflow (collected)
+  * Particles smaller than d50c → mostly go to overflow (remain in water)
+
+TYPICAL ALGAE VALUES:
+- Algae cell size: 2-50 μm (varies by species)
+- Algae density: ~1050-1100 kg/m³
+- Water density: ~1000 kg/m³
