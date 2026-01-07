@@ -22,19 +22,22 @@ TEMP_MAX_SAFE = 30
 TEMP_OPTIMAL = 25
 
 # ==================== COLLECTION SYSTEM ====================
-# Auto-shovel mechanism
-SETTLING_TIME = 5  # seconds (fast for demo, use 300 for real)
-SHOVEL_OPEN_TIME = 3  # seconds - how long shovel stays open
+# U-bottom passive collection (gravity-based, no moving parts)
+SETTLING_TIME = 5  # seconds (fast for demo, use 300-600 for real)
+DRAIN_OPEN_TIME = 10  # seconds - how long drain valve stays open
 COLLECTION_COOLDOWN = 30  # seconds (fast for demo, use 3600 for real)
 
 # Multi-cycle collection for thorough harvesting
-COLLECTION_CYCLES = 3  # Number of collect-settle-collect cycles per harvest
+COLLECTION_CYCLES = 3  # Number of settle-drain cycles per harvest
 CYCLE_INTERVAL = 10  # seconds between cycles (lets disturbed algae re-settle)
 TURBIDITY_REDUCTION_PER_CYCLE = 0.6  # 60% reduction per collection cycle
 
+# Tank geometry (U-bottom with longitudinal slope)
+U_DEPTH = 80  # mm - depth from sides to center (parabolic curve)
+LONGITUDINAL_SLOPE_ANGLE = 12  # degrees - front high to back low
+
 # Valve control
-VALVE_PIN = 17  # GPIO pin for flow valve (stops flow for settling)
-SHOVEL_PIN = 27  # GPIO pin for shovel servo/motor
+DRAIN_VALVE_PIN = 17  # GPIO pin for drain valve at back-center (lowest point)
 
 # ==================== SIMULATION PARAMETERS ====================
 # How simulated sensors behave
