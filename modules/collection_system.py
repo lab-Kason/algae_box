@@ -50,7 +50,7 @@ class CollectionSystem:
     
     def start_collection(self, force: bool = False) -> dict:
         """
-        Execute full collection sequence
+        Execute full collection sequence with multiple cycles
         Args:
             force: Bypass cooldown timer if True
         Returns:
@@ -68,47 +68,59 @@ class CollectionSystem:
         
         self.is_collecting = True
         print("\n" + "="*50)
-        print("🌊 STARTING COLLECTION SEQUENCE")
+        print("🌊 STARTING MULTI-CYCLE COLLECTION SEQUENCE")
+        print(f"   {config.COLLECTION_CYCLES} cycles for thorough harvesting")
         print("="*50)
         
         try:
-            # Step 1: Close valve (stop flow)
+            # Step 1: Close valve ONCE at the start
             print("1️⃣  Closing valve to stop water flow...")
             self._close_valve()
             time.sleep(2)
             
-            # Step 2: Wait for settling
-            print(f"2️⃣  Waiting {config.SETTLING_TIME}s for algae to settle...")
-            if self.simulation_mode:
-                # In simulation, just show progress
-                for i in range(5):
-                    time.sleep(1)
-                    print(f"   ⏳ Settling... {i+1}s / {config.SETTLING_TIME}s (fast-forward in sim)")
-            else:
-                time.sleep(config.SETTLING_TIME)
+            # Multiple collection cycles
+            for cycle in range(1, config.COLLECTION_CYCLES + 1):
+                print(f"\n🔄 CYCLE {cycle}/{config.COLLECTION_CYCLES}")
+                print("-" * 50)
+                
+                # Wait for settling
+                print(f"   ⏳ Waiting {config.SETTLING_TIME}s for algae to settle...")
+                if self.simulation_mode:
+                    for i in range(3):
+                        time.sleep(1)
+                        print(f"      Settling... {i+1}s / {config.SETTLING_TIME}s (fast-forward in sim)")
+                else:
+                    time.sleep(config.SETTLING_TIME)
+                
+                # Open shovel to collect
+                print(f"   🥄 Opening shovel to collect settled algae...")
+                self._open_shovel()
+                time.sleep(config.SHOVEL_OPEN_TIME)
+                
+                # Close shovel
+                print(f"   ✅ Closing shovel (cycle {cycle} complete)")
+                self._close_shovel()
+                
+                # Wait between cycles (except after last cycle)
+                if cycle < config.COLLECTION_CYCLES:
+                    print(f"   ⏸️  Waiting {config.CYCLE_INTERVAL}s before next cycle...")
+                    print(f"      (Allows disturbed algae to re-settle)")
+                    time.sleep(config.CYCLE_INTERVAL)
             
-            # Step 3: Open shovel to collect
-            print("3️⃣  Opening shovel to collect settled algae...")
-            self._open_shovel()
-            time.sleep(config.SHOVEL_OPEN_TIME)
-            
-            # Step 4: Close shovel
-            print("4️⃣  Closing shovel...")
-            self._close_shovel()
-            time.sleep(2)
-            
-            # Step 5: Open valve (resume flow)
+            # Final step: Open valve to resume flow
+            print("\n" + "-" * 50)
             print("5️⃣  Opening valve to resume water flow...")
             self._open_valve()
             
             self.last_collection_time = time.time()
-            print("✅ COLLECTION COMPLETE!")
+            print("✅ ALL CYCLES COMPLETE! Tank thoroughly harvested.")
             print("="*50 + "\n")
             
             return {
                 'success': True,
-                'message': 'Collection completed successfully',
-                'timestamp': time.time()
+                'message': f'Collection completed successfully ({config.COLLECTION_CYCLES} cycles)',
+                'timestamp': time.time(),
+                'cycles': config.COLLECTION_CYCLES
             }
             
         except Exception as e:

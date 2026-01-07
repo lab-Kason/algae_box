@@ -134,6 +134,10 @@ class AlgaeBox:
         print("\n🎯 All conditions met for collection!")
         result = self.collector.start_collection()
         
+        # Update turbidity sensor simulation to reflect collection
+        if result['success'] and self.turbidity.simulation_mode:
+            self.turbidity.simulate_collection()
+        
         return result['success']
     
     def run_monitoring_loop(self, duration_minutes: int = None):
@@ -169,6 +173,11 @@ class AlgaeBox:
                 # Log data
                 self.log_data(data, collection_triggered)
                 
+                # If collection happened, wait one cycle time before next reading
+                if collection_triggered:
+                    print(f"\n⏸️  Waiting {config.CYCLE_INTERVAL}s (one cycle time) after collection...")
+                    time.sleep(config.CYCLE_INTERVAL)
+                
                 # Check if duration limit reached
                 if duration_minutes:
                     elapsed_minutes = (time.time() - start_time) / 60
@@ -203,8 +212,8 @@ def main():
     system = AlgaeBox()
     
     # Run monitoring loop
-    # For testing: run for 10 minutes (remove duration arg to run forever)
-    system.run_monitoring_loop(duration_minutes=10)
+    # For testing: run for 2 minutes (remove duration arg to run forever)
+    system.run_monitoring_loop(duration_minutes=6)
 
 
 if __name__ == "__main__":

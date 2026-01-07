@@ -7,7 +7,7 @@ SIMULATION_MODE = True  # Set to False when real sensors connected
 
 # ==================== SENSOR THRESHOLDS ====================
 # Turbidity settings
-TURBIDITY_HARVEST_THRESHOLD = 100  # NTU - trigger collection above this
+TURBIDITY_HARVEST_THRESHOLD = 35  # NTU - trigger collection above this
 TURBIDITY_MIN = 0                  # NTU
 TURBIDITY_MAX = 200               # NTU
 
@@ -23,9 +23,14 @@ TEMP_OPTIMAL = 25
 
 # ==================== COLLECTION SYSTEM ====================
 # Auto-shovel mechanism
-SETTLING_TIME = 300  # seconds (5 min) - time for algae to settle after flow stops
-SHOVEL_OPEN_TIME = 10  # seconds - how long shovel stays open
-COLLECTION_COOLDOWN = 3600  # seconds (1 hour) - minimum time between collections
+SETTLING_TIME = 5  # seconds (fast for demo, use 300 for real)
+SHOVEL_OPEN_TIME = 3  # seconds - how long shovel stays open
+COLLECTION_COOLDOWN = 30  # seconds (fast for demo, use 3600 for real)
+
+# Multi-cycle collection for thorough harvesting
+COLLECTION_CYCLES = 3  # Number of collect-settle-collect cycles per harvest
+CYCLE_INTERVAL = 10  # seconds between cycles (lets disturbed algae re-settle)
+TURBIDITY_REDUCTION_PER_CYCLE = 0.6  # 60% reduction per collection cycle
 
 # Valve control
 VALVE_PIN = 17  # GPIO pin for flow valve (stops flow for settling)
@@ -33,13 +38,13 @@ SHOVEL_PIN = 27  # GPIO pin for shovel servo/motor
 
 # ==================== SIMULATION PARAMETERS ====================
 # How simulated sensors behave
-SIM_ALGAE_GROWTH_RATE = 0.5  # NTU increase per minute
+SIM_ALGAE_GROWTH_RATE = 5.0  # NTU increase per minute (fast for demo)
 SIM_TURBIDITY_NOISE = 2.0    # Random fluctuation in readings
 SIM_PH_DRIFT = 0.01          # pH change per minute
 SIM_TEMP_VARIATION = 0.5     # Temperature fluctuation
 
 # ==================== MONITORING ====================
-SENSOR_READ_INTERVAL = 60    # seconds - how often to read sensors
+SENSOR_READ_INTERVAL = 10    # seconds - how often to read sensors
 LOG_FILE = "data/algae_log.csv"
 ALERT_EMAIL = None           # Set email for alerts (future feature)
 

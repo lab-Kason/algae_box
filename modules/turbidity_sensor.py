@@ -18,6 +18,7 @@ class TurbiditySensor:
         self.simulation_mode = simulation_mode if simulation_mode is not None else config.SIMULATION_MODE
         self.start_time = time.time()
         self.sim_base_turbidity = 10.0  # Starting turbidity for simulation
+        self.last_collection_time = None  # Track when collection happened
         
         if not self.simulation_mode:
             self._init_real_sensor()
@@ -61,11 +62,22 @@ class TurbiditySensor:
         - Starts low
         - Gradually increases (algae multiplying)
         - Adds realistic noise
+        - Reduces after collection
         """
         elapsed_minutes = (time.time() - self.start_time) / 60
         
         # Simulate algae growth: exponential at first, then linear
         growth = config.SIM_ALGAE_GROWTH_RATE * elapsed_minutes
+        
+        # If collection happened, reduce turbidity
+        if self.last_collection_time is not None:
+            time_since_collection = (time.time() - self.last_collection_time) / 60
+            # Multi-cycle collection removes more algae
+            reduction_factor = config.TURBIDITY_REDUCTION_PER_CYCLE ** config.COLLECTION_CYCLES
+            # Calculate what growth would have been at collection time
+            growth_at_collection = config.SIM_ALGAE_GROWTH_RATE * ((self.last_collection_time - self.start_time) / 60)
+            # Apply reduction and then add new growth since collection
+            growth = (growth_at_collection * reduction_factor) + (config.SIM_ALGAE_GROWTH_RATE * time_since_collection)
         
         # Add random fluctuation (mimics real sensor noise)
         noise = random.uniform(-config.SIM_TURBIDITY_NOISE, config.SIM_TURBIDITY_NOISE)
@@ -129,6 +141,12 @@ class TurbiditySensor:
             'mode': 'simulation' if self.simulation_mode else 'real',
             'threshold': config.TURBIDITY_HARVEST_THRESHOLD
         }
+    
+    def simulate_collection(self):
+        """Called by main system when collection happens to update simulation"""
+        if self.simulation_mode:
+            self.last_collection_time = time.time()
+            print(f"   📉 Turbidity sensor: Simulating {config.COLLECTION_CYCLES}-cycle collection effect")
 
 
 if __name__ == "__main__":
