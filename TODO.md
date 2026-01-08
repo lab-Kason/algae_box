@@ -1,9 +1,9 @@
 # Algae Box Project - TODO List
 
 **Project:** Automated Algae Cultivation & Collection System  
-**Status:** Simulation Phase Complete ✅  
-**Next Phase:** Hardware Integration  
-**Last Updated:** January 7, 2026
+**Status:** Design Phase Complete ✅ | Ready for Hardware Procurement  
+**Current Design:** Pump-Based Flow Manifold System with Slot Cut  
+**Last Updated:** January 8, 2026
 
 ---
 
@@ -14,29 +14,58 @@
 - Turbidity sensor simulation
 - pH sensor simulation  
 - Temperature sensor simulation
-- Multi-cycle collection logic (3 cycles)
-- Auto-shovel gravity-based collection system
 - Data logging to CSV
 - Safety checks (pH/temp validation)
 - Post-collection wait period
 - Plitt model documentation
 - Complete hardware BOM with Taobao sources
+- **CAD simulation (FreeCAD Python)**
+  - Standard 20L rectangular tank (430×215×215mm)
+  - Pump-based flow manifold with 8mm slot cut
+  - 100 algae particles with realistic physics
+  - Water resistance modeling (boundary layer + drag)
+  - 7-phase collection cycle animation
+  - Multiple flush passes (3× 600 frames = 1800 frames)
+- **Pump-based collection system design**
+  - Flow manifold at FRONT wall with slot cut "water knife"
+  - Unidirectional flow: FRONT → BACK
+  - Multi-pass flushing (3 passes per cycle)
+  - Separate phases: settle → flush → wait → drain
+  - No mechanical scrapers (gentle laminar flow)
+- **Updated control code**
+  - collection_system.py rewritten for pump control
+  - config.py updated with pump parameters
+  - HARDWARE_BOM.md updated with pump + PVC manifold parts
+
+---
+
+## 🚀 Design Evolution History
+
+1. ~~**Mechanical Shovel** → Rejected (algae re-suspension issue)~~
+2. ~~**Drain-and-Tilt** → Rejected (scalability issues for larger tanks)~~
+3. ~~**V-Bottom Passive** → Rejected (boss: don't modify tank)~~
+4. ~~**U-Bottom Passive** → Rejected (boss: prefer pump-based)~~
+5. ✅ **Pump-Based Flow Manifold** ← **CURRENT DESIGN**
 
 ---
 
 ## 📋 TODO List
 
-### Phase 1: Pre-Hardware (Current Phase)
-- [ ] **Create Taobao shopping checklist** with optimized Chinese search terms
-- [ ] **Design wiring diagram** showing all component connections
-- [ ] **Create GPIO pin assignment document** (which sensor goes to which pin)
+### Phase 1: Pre-Hardware (Current Phase) ✅ MOSTLY COMPLETE
+- [x] **Create hardware BOM** with pump-based system components
+- [x] **Design CAD simulation** for proposal demonstration
+- [x] **Design flow manifold system** (25mm PVC with 8mm slot cut)
+- [x] **Update control code** for pump-based collection
+- [x] **Add water resistance physics** to simulation
+- [ ] **Create wiring diagram** showing all component connections
+- [ ] **Create GPIO pin assignment document** (pump, valve, sensors)
 - [ ] **Write sensor calibration procedures** (especially pH and turbidity)
-- [ ] **Document assembly instructions** for shovel mechanism
+- [ ] **Document manifold construction instructions** (slot cutting, assembly)
 - [ ] **Add realistic growth simulation** option (change growth rate to 0.005 NTU/min)
 - [ ] **Test data analysis scripts** - read and plot logged CSV data
 - [ ] **Create backup/restore system** for configuration and data
 
-### Phase 2: Hardware Procurement
+### Phase 2: Hardware Procurement (READY TO ORDER)
 - [ ] **Order Phase 1 components** (Pi, basic sensors, wiring)
   - [ ] Raspberry Pi 4B + SD card + power supply
   - [ ] Turbidity sensor (DFRobot SEN0189 or equivalent)
@@ -44,18 +73,23 @@
   - [ ] MCP3008 ADC
   - [ ] Jumper wires and breadboard
   - [ ] Basic resistor/component kit
-- [ ] **Order Phase 2 components** (after Phase 1 arrives)
+- [ ] **Order Phase 2 components** (actuators and pump system)
   - [ ] pH sensor + calibration buffers
   - [ ] Solenoid valve (12V)
-  - [ ] Servo motor (MG996R)
+  - [ ] **12V DC Water Pump (0.5-1.5 L/min)**
   - [ ] Relay module (2-channel)
+  - [ ] PWM speed controller (optional)
   - [ ] 12V power supply
   - [ ] Waterproof enclosure
-- [ ] **Order mechanical parts** (after designing shovel)
-  - [ ] Acrylic/stainless steel sheet
-  - [ ] Hinges, bolts, nuts
-  - [ ] Silicone tubing
-  - [ ] Cable glands
+- [ ] **Order flow manifold parts**
+  - [ ] 25mm PVC pipe (1 meter)
+  - [ ] PVC end caps (2 pieces)
+  - [ ] PVC cement/glue
+  - [ ] Barbed hose fittings (25mm to 12mm)
+  - [ ] Silicone tubing (12mm, 2-3 meters)
+  - [ ] Suction cups or mounting brackets
+  - [ ] Waterproof epoxy
+  - [ ] Rotary tool or Dremel (for slot cutting)
 
 ### Phase 3: Hardware Setup & Testing
 - [ ] **Set up Raspberry Pi**
@@ -71,21 +105,25 @@
 - [ ] **Test actuators**
   - [ ] Relay module: Test switching with GPIO
   - [ ] Solenoid valve: Test open/close operation
-  - [ ] Servo motor: Test rotation range and holding torque
+  - [ ] **Water pump: Test flow rate and PWM control**
 - [ ] **Update code with real hardware**
   - [ ] Uncomment TODO sections in turbidity_sensor.py
   - [ ] Uncomment TODO sections in ph_sensor.py
   - [ ] Uncomment TODO sections in temperature_sensor.py
-  - [ ] Uncomment TODO sections in collection_system.py
+  - [ ] Uncomment TODO sections in collection_system.py (pump control)
   - [ ] Test each sensor module independently
   - [ ] Add voltage-to-NTU calibration curve for turbidity
   - [ ] Add voltage-to-pH calibration curve
-- [ ] **Build and test collection mechanism**
-  - [ ] Design shovel/scraper mechanism
-  - [ ] Mount servo motor
-  - [ ] Test opening/closing motion
-  - [ ] Install in tank bottom
-  - [ ] Test settling and collection cycle
+- [ ] **Build and test flow manifold system**
+  - [ ] Cut PVC pipe to tank width (~215mm)
+  - [ ] Mark and cut 8mm × 185mm horizontal slot
+  - [ ] Smooth edges with file/sandpaper
+  - [ ] Glue end caps with PVC cement
+  - [ ] Install barbed fitting for pump hose
+  - [ ] Mount manifold 10mm above bottom (suction cups or brackets)
+  - [ ] Connect pump to manifold with silicone tubing
+  - [ ] Test flow pattern (should create uniform water curtain)
+  - [ ] Adjust flow rate for optimal sweeping (PWM control)
 
 ### Phase 4: Integration & Calibration
 - [ ] **Integrate all sensors on breadboard**
@@ -99,17 +137,22 @@
   - [ ] Monitor pH changes during growth cycle
   - [ ] Verify temperature stability
 - [ ] **Test collection system with real algae**
-  - [ ] Verify settling time is adequate (adjust from 5s to 300s)
+  - [ ] Verify settling time is adequate (adjust from 5s to 100-300s)
   - [ ] Check collection efficiency (how much algae collected)
   - [ ] Measure turbidity reduction after collection
-  - [ ] Optimize number of cycles (currently 3)
-  - [ ] Adjust cycle interval timing
+  - [ ] Test multiple flush passes (currently 3× per cycle)
+  - [ ] Verify flow velocity doesn't cause re-suspension
+  - [ ] Optimize pump flow rate (0.5-1.5 L/min range)
+  - [ ] Adjust flush time per pass (currently 10s, real: 200-600s)
 - [ ] **Fine-tune parameters in config.py**
-  - [ ] Set realistic settling time (300s)
+  - [ ] Set realistic settling time (100-300s)
+  - [ ] Set realistic flush time per pass (200-600s)
+  - [ ] Adjust number of flush passes if needed
   - [ ] Set realistic collection cooldown (3600s)
   - [ ] Set realistic growth rate for simulation (0.005 NTU/min)
   - [ ] Adjust turbidity threshold based on species
   - [ ] Set safe pH/temp ranges for your algae
+  - [ ] Fine-tune pump flow rate (FLOW_RATE in config)
 
 ### Phase 5: Algae Identification Integration
 - [ ] **Locate existing algae identification program**
@@ -187,13 +230,43 @@
 
 ## 🐛 Known Issues / Questions
 
-- [ ] **Growth rate realism:** Current 5 NTU/min is ~7200x too fast (demo only)
-- [ ] **Settling time:** Need to verify 5min is sufficient in real tank
-- [ ] **Collection efficiency:** Unknown until physical testing
-- [ ] **Tank size:** Need to specify tank dimensions for shovel design
+- [x] ~~Growth rate realism: Current 5 NTU/min is ~7200x too fast~~ (demo only, documented)
+- [x] ~~Collection method: Shovel vs passive vs pump~~ → **Pump-based selected**
+- [x] ~~Tank modifications needed?~~ → **No, standard rectangular tank**
+- [ ] **Settling time:** Need to verify 5min is sufficient in real tank (currently fast for demo)
+- [ ] **Flush time:** Need to verify 10s per pass is sufficient (currently fast for demo, should be 200-600s)
+- [ ] **Collection efficiency:** Unknown until physical testing (CAD shows ~36% with short flush)
+- [ ] **Flow rate optimization:** What pump flow rate gives best collection? (0.5-1.5 L/min)
+- [ ] **Water resistance impact:** Does real-world drag match simulation? (boundary layer effects)
 - [ ] **Algae species:** Which microalgae will be cultivated?
 - [ ] **Power backup:** Should we add UPS for power outages?
 - [ ] **Winter operation:** Heating requirements in cold climates?
+
+---
+
+## 💡 Key Design Insights from CAD Simulation
+
+✅ **Water resistance matters!** 
+- Algae at bottom experience only ~30-40% of bulk flow velocity
+- Boundary layer + viscous drag significantly reduce effective sweeping force
+- 3× longer flush time justified by physics
+
+✅ **Multiple passes work!**
+- Pass 1: Breaks weak adhesion (adhesion strength 0.3-0.6)
+- Pass 2: Moves partially-freed algae
+- Pass 3: Sweeps remaining stubborn algae (0.7-1.0 adhesion)
+- Total exposure time > individual particle adhesion resistance
+
+✅ **Slot cut > holes**
+- Continuous water curtain (no gaps)
+- Uniform flow distribution across full width
+- Lower pressure = gentler flow (preserves algae cells)
+- Easier fabrication (one cut vs. drilling 10 holes)
+
+✅ **Extended flush time critical**
+- 36% collection with 600 frames (old setting)
+- Predicted >85% collection with 1800 frames (3× longer)
+- Adhesion weakens exponentially with flow exposure time
 
 ---
 
@@ -204,19 +277,34 @@
 - Multi-cycle collection working
 - Data logging functional
 
+### Milestone 1.5: Design Complete ✅ (Jan 8, 2026)
+- **CAD simulation complete** (FreeCAD Python, 638 lines)
+- **Pump-based flow manifold designed**
+- **Water resistance physics added**
+- **HARDWARE_BOM updated** for pump system
+- **Control code updated** (collection_system.py, config.py)
+- **Ready for hardware procurement**
+
 ### Milestone 2: Hardware Ordered (Target: Jan 2026)
 - All components purchased
+- PVC manifold parts ordered
 - Waiting for delivery
 
-### Milestone 3: Basic Sensors Working (Target: Feb 2026)
+### Milestone 3: Manifold Built (Target: Feb 2026)
+- PVC pipe cut and slot created
+- Pump connected and tested
+- Flow pattern verified
+
+### Milestone 4: Basic Sensors Working (Target: Feb 2026)
 - Turbidity + temperature reading real values
 - Logging real data
 
-### Milestone 4: Full System Operational (Target: Mar 2026)
+### Milestone 5: Full System Operational (Target: Mar 2026)
 - All sensors + actuators working
 - Collection system tested with real algae
+- Flow rate optimized
 
-### Milestone 5: Autonomous Operation (Target: Apr 2026)
+### Milestone 6: Autonomous Operation (Target: Apr 2026)
 - System runs 24/7 unsupervised
 - Algae ID integrated
 - Production ready
@@ -234,14 +322,22 @@
 
 ---
 
-## 🤔 Decisions Needed
+## 🤔 Decisions Made
 
-- [ ] **Tank size/shape:** What are the dimensions?
+- [x] **Tank:** Standard 20L rectangular (430×215×215mm) - no modifications
+- [x] **Collection method:** Pump-based flow manifold with slot cut
+- [x] **Manifold design:** 25mm PVC pipe, 8mm × 185mm horizontal slot
+- [x] **Flow direction:** Unidirectional FRONT → BACK (simple, effective)
+- [x] **Flush strategy:** Multiple passes (3×) with extended time
+- [x] **Pump type:** 12V DC submersible (0.5-1.5 L/min adjustable)
+
+## 🤔 Decisions Still Needed
+
 - [ ] **Algae species:** Chlorella? Spirulina? Mixed culture?
 - [ ] **Location:** Indoor lab? Outdoor? Greenhouse?
 - [ ] **Power source:** Wall outlet? Solar? Battery backup?
-- [ ] **Shovel design:** Hinged door? Sliding gate? Rotating scraper?
 - [ ] **Collection container:** Size? Material? Automatic emptying?
+- [ ] **Mounting method:** Suction cups vs. brackets for manifold?
 
 ---
 
