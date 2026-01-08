@@ -1,8 +1,9 @@
 # Algae Box - Complete Hardware Shopping List
 
 ## 🛒 Complete Bill of Materials (BOM)
+## Pump-Based Flow Manifold System
 
-Last Updated: January 7, 2026
+Last Updated: January 8, 2026
 
 ---
 
@@ -106,28 +107,42 @@ Last Updated: January 7, 2026
   - 1/4" for smaller tanks
   - 3/4" for larger systems
 
-### B. Servo Motor (Shovel Mechanism) - **$12**
+### B. Water Pump (Flow Manifold System) - **$18**
 
-**Model: MG996R High Torque Metal Gear Servo**
-- **Torque:** 11 kg·cm @ 6V
-- **Rotation:** 180° (0-180°)
-- **Voltage:** 4.8-7.2V
-- **Why:** Strong enough to operate shovel/scraper mechanism
-- **Supplier:** [Amazon](https://www.amazon.com/Smraza-Helicopter-Airplane-Control-Arduino/dp/B07L5FQVXV), hobby stores
+**Model: 12V DC Submersible Water Pump**
+- **Flow Rate:** 0.5-1.5 L/min (adjustable via PWM)
+- **Voltage:** 12V DC
+- **Head Height:** 1-2m (sufficient for tank)
+- **Type:** Brushless DC pump (quiet, long life)
+- **Why:** Creates gentle laminar flow through slot cut manifold for algae sweeping
+- **Supplier:** [Amazon](https://www.amazon.com/KEDSUM-Submersible-Fountain-Aquarium-Hydroponics/dp/B013J4P87A), AliExpress
+- **Features:**
+  - Low noise operation
+  - Food-safe materials
+  - Easy flow rate control
+  - Can run continuously
 
-**Alternative: Linear Actuator - $25-40**
-- If you need push/pull motion instead of rotation
-- 12V DC, 50-100mm stroke length
+**Alternative: Peristaltic Pump - $25-35**
+- More precise flow control
+- Self-priming
+- Better for gentle algae handling
 
 ### C. Relay Module (2-Channel) - **$6**
 
 **Model: 2-Channel 5V Relay Module**
-- **Channels:** 2 (valve + shovel power)
+- **Channels:** 2 (drain valve + pump power)
 - **Input:** 5V control from GPIO
-- **Output:** Switches 12V DC for valve/servo
+- **Output:** Switches 12V DC for valve/pump
 - **Isolation:** Optocoupler isolated
 - **Why:** Safely control high-power devices from Pi GPIO
 - **Supplier:** [Amazon](https://www.amazon.com/HiLetgo-Channel-Isolation-Support-Trigger/dp/B00LW15A4W), electronics stores
+
+### D. PWM Motor Speed Controller (Optional) - **$8**
+
+**Model: 12V PWM DC Motor Speed Controller**
+- **Why:** Fine-tune pump flow rate for optimal sweeping
+- **Features:** Adjustable duty cycle 0-100%
+- **Supplier:** Amazon, electronics stores
 
 ---
 
@@ -203,31 +218,53 @@ Last Updated: January 7, 2026
 
 ---
 
-## 8. Mechanical Parts (Shovel/Scraper Mechanism)
+## 8. Flow Manifold System Parts
 
-### Acrylic Sheet (3mm thick) - **$10**
-- **Size:** 300x200mm
-- **Why:** Build custom shovel/scraper blade
-- **Supplier:** Hardware store, Amazon
+### PVC Pipe (25mm diameter) - **$8**
+- **Size:** 25mm (1 inch) diameter
+- **Length:** 1 meter (cut to tank width ~215mm)
+- **Why:** Main manifold body for water distribution
+- **Supplier:** Hardware store (plumbing section), Home Depot
 
-### Stainless Steel Sheet (0.5mm) - **$8** *(Alternative)*
-- More durable for scraper
+### PVC End Caps (25mm) - **$3**
+- **Quantity:** 2 pieces
+- **Why:** Seal both ends of manifold pipe
+- **Supplier:** Hardware store
+
+### PVC Cement/Glue - **$6**
+- For permanent waterproof joints
 - Supplier: Hardware store
 
-### M3 Bolts, Nuts, Washers Set - **$10**
-- Various lengths (6-30mm)
-- Mounting hardware
-- Supplier: Amazon, hardware store
-
-### Hinges (Small, Stainless Steel) - **$5**
-- For shovel opening mechanism
-- Supplier: Hardware store
+### Barbed Hose Fitting (25mm to 12mm) - **$5**
+- **Why:** Connect pump hose to manifold inlet
+- **Supplier:** Hardware store, aquarium stores
 
 ### Silicone Tubing (Food Grade) - **$8**
-- **Size:** 1/2 inch ID
+- **Size:** 12mm (1/2 inch) ID
 - **Length:** 2-3 meters
-- **Why:** Connect valve to tank drainage
+- **Why:** Connect pump to manifold and drain valve
 - **Supplier:** Amazon, brewing supply stores
+
+### Mounting Brackets (Stainless Steel) - **$6**
+- **Type:** L-brackets or pipe clamps
+- **Why:** Secure manifold to tank front wall
+- **Supplier:** Hardware store
+
+### Suction Cups (Heavy Duty) - **$8**
+- **Size:** 40-50mm diameter
+- **Quantity:** 3-4 pieces
+- **Why:** Mount manifold inside tank without drilling glass
+- **Supplier:** Aquarium stores, Amazon
+
+### Rotary Tool or Dremel - **$30** *(if you don't have)*
+- **Why:** Cut horizontal slot (8mm wide × 185mm long) in PVC pipe
+- **Includes:** Cutting wheels, grinding bits
+- **Supplier:** Harbor Freight, Amazon, Home Depot
+
+### Waterproof Epoxy Resin - **$10**
+- **Why:** Seal around manifold inlet, smooth edges of slot cut
+- **Type:** Marine epoxy or aquarium-safe silicone
+- **Supplier:** Hardware store, aquarium stores
 
 ---
 
@@ -297,14 +334,16 @@ Last Updated: January 7, 2026
 
 ## 📦 Package Recommendations
 
-### **Starter Package (Minimum Viable System)** - ~$230
+### **Starter Package (Minimum Viable System)** - ~$245
 ✅ Raspberry Pi 4 (4GB) + SD card + power supply  
 ✅ DFRobot Turbidity Sensor  
 ✅ DS18B20 Temperature Sensor  
 ✅ MCP3008 ADC  
 ✅ 2-Channel Relay Module  
 ✅ 12V Solenoid Valve  
-✅ MG996R Servo Motor  
+✅ 12V DC Water Pump  
+✅ PVC Pipe (25mm) + end caps + fittings  
+✅ Silicone tubing  
 ✅ 12V Power Supply  
 ✅ Jumper wires + breadboard  
 ✅ Basic resistor kit  
@@ -312,22 +351,27 @@ Last Updated: January 7, 2026
 
 *Skip pH sensor initially, add later when calibration solutions available*
 
-### **Complete System** - ~$380
+**Key Advantage:** No mechanical scraper = fewer moving parts, lower maintenance
+
+### **Complete System** - ~$395
 Everything in Starter Package PLUS:  
 ✅ DFRobot pH Sensor + calibration buffers  
 ✅ ADS1115 (higher precision ADC)  
 ✅ Camera module  
 ✅ RTC module  
-✅ All mechanical parts  
-✅ Tools (if needed)  
+✅ PWM speed controller (fine flow control)  
+✅ Mounting hardware (brackets, suction cups)  
+✅ Waterproof epoxy  
+✅ Tools (rotary tool for slot cutting, if needed)  
 
-### **Professional Grade** - ~$500
+### **Professional Grade** - ~$520
 Complete System PLUS:  
 ✅ UPS HAT  
 ✅ USB Microscope (better imaging)  
 ✅ Industrial turbidity sensor  
-✅ Linear actuator (instead of servo)  
+✅ Peristaltic pump (precision flow control)  
 ✅ Quality soldering kit  
+✅ Flow rate sensor (measure actual pump performance)  
 
 ---
 
@@ -374,11 +418,11 @@ When you're ready to order, I can provide:
 
 ## 💰 **Total Cost Estimate:**
 
-| Configuration | Cost | Timeline |
-|--------------|------|----------|
-| **Minimum Viable** | $230 | Order now, start with basics |
-| **Recommended** | $380 | Full featured, room to grow |
-| **Professional** | $500 | Production quality |
+| Configuration | Cost | Timeline | Features |
+|--------------|------|----------|----------|
+| **Minimum Viable** | $245 | Order now, start with basics | Pump + slot cut manifold |
+| **Recommended** | $395 | Full featured, room to grow | + pH sensor + camera |
+| **Professional** | $520 | Production quality | + precision pump + flow sensor |
 
 **Note:** Prices are approximate USD as of January 2026. Check current prices as components fluctuate.
 
@@ -393,19 +437,47 @@ When you're ready to order, I can provide:
 - MCP3008 ADC
 - Relay module
 - Solenoid valve
+- **12V DC water pump**
+- **PVC pipe (25mm) + fittings**
+- **Silicone tubing**
 - Basic wiring kit
 
 **Start coding and testing while waiting for:**
 
 ### **Phase 2 - Order Later:**
 - pH sensor (requires calibration knowledge)
-- Servo/actuator (after designing shovel mechanism)
+- PWM speed controller (fine-tune flow after testing)
 - Camera module (for algae ID integration)
-- Mechanical parts (custom to your tank)
+- Mounting hardware (after testing manifold positioning)
+- Rotary tool (for cutting slot in PVC - can also use hacksaw + file)
+
+---
+
+## 🔧 **System Design Notes**
+
+### Flow Manifold Construction:
+1. Cut PVC pipe to tank width (~215mm)
+2. Mark slot position: 8mm wide × 185mm long on bottom of pipe
+3. Use rotary tool to cut horizontal slot (creates "water knife" effect)
+4. Smooth edges with file/sandpaper
+5. Glue end caps with PVC cement
+6. Install barbed fitting at one end for pump hose
+7. Mount 10mm above bottom using suction cups or brackets
+
+### System Advantages:
+✅ No moving parts in tank (higher reliability)
+✅ Gentle flow prevents algae cell damage
+✅ Continuous operation possible
+✅ Easy to adjust flow rate (PWM control)
+✅ Scalable to larger tanks
+✅ Lower maintenance
+✅ Slot cut creates uniform water curtain (better than holes)
+✅ Works with standard rectangular tanks (no modifications needed)
 
 ---
 
 Want me to create:
-1. **Detailed wiring diagram** for specific components?
-2. **Assembly instructions** for the shovel mechanism?
-3. **Calibration procedures** for each sensor?
+1. **Detailed wiring diagram** for pump + valve + sensors?
+2. **Step-by-step manifold construction guide** with photos/diagrams?
+3. **Calibration procedures** for turbidity and pH sensors?
+4. **Flow rate calculation** for optimal algae collection?

@@ -370,7 +370,7 @@ while loop_count < num_loops:
     print("")
     # PHASE 1: SETTLING - Algae sink to flat bottom (pump OFF)
     print("Phase 1: Settling - algae drop to bottom (pump OFF)...")
-    for frame in range(num_frames_settle):
+    for frame in range(num_frames_settle): 
         for i in range(num_algae):
             if i in collected_algae:
                 continue

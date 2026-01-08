@@ -22,22 +22,34 @@ TEMP_MAX_SAFE = 30
 TEMP_OPTIMAL = 25
 
 # ==================== COLLECTION SYSTEM ====================
-# U-bottom passive collection (gravity-based, no moving parts)
-SETTLING_TIME = 5  # seconds (fast for demo, use 300-600 for real)
+# Pump-based flow manifold system (slot-cut water knife)
+SETTLING_TIME = 5  # seconds (fast for demo, use 100-300 for real)
+FLUSH_PASSES = 3   # Number of repeated sweep passes per cycle
+FLUSH_TIME_PER_PASS = 10  # seconds per pass (fast for demo, use 200-600 for real)
+COLLECTION_WAIT_TIME = 3  # seconds - pump OFF, algae settle at drain
 DRAIN_OPEN_TIME = 10  # seconds - how long drain valve stays open
 COLLECTION_COOLDOWN = 30  # seconds (fast for demo, use 3600 for real)
 
 # Multi-cycle collection for thorough harvesting
-COLLECTION_CYCLES = 3  # Number of settle-drain cycles per harvest
-CYCLE_INTERVAL = 10  # seconds between cycles (lets disturbed algae re-settle)
-TURBIDITY_REDUCTION_PER_CYCLE = 0.6  # 60% reduction per collection cycle
+COLLECTION_CYCLES = 1  # Number of complete collection cycles per harvest
+CYCLE_INTERVAL = 10  # seconds between cycles (optional rest period)
+TURBIDITY_REDUCTION_PER_CYCLE = 0.7  # 70% reduction per collection cycle
 
-# Tank geometry (U-bottom with longitudinal slope)
-U_DEPTH = 80  # mm - depth from sides to center (parabolic curve)
-LONGITUDINAL_SLOPE_ANGLE = 12  # degrees - front high to back low
+# Manifold specifications (from CAD design)
+MANIFOLD_DIAMETER = 25  # mm - PVC pipe diameter
+SLOT_WIDTH = 8  # mm - horizontal slot cut width
+SLOT_LENGTH = 185  # mm - slot length (almost full tank width)
+MANIFOLD_HEIGHT = 10  # mm - height above bottom
+FLOW_RATE = 1.0  # L/min - target pump flow rate (adjustable via PWM)
 
-# Valve control
-DRAIN_VALVE_PIN = 17  # GPIO pin for drain valve at back-center (lowest point)
+# Flow physics (with water resistance)
+FLOW_VELOCITY_BULK = 0.25  # mm/frame equivalent (~15 mm/s)
+BOUNDARY_LAYER_THICKNESS = 3.0  # mm - reduces velocity near bottom
+DRAG_REDUCTION_FACTOR = 0.6  # Water viscosity effect
+
+# Valve and pump control
+DRAIN_VALVE_PIN = 17  # GPIO pin for drain valve at back wall
+PUMP_PIN = 18  # GPIO pin for pump relay (12V DC pump)
 
 # ==================== SIMULATION PARAMETERS ====================
 # How simulated sensors behave

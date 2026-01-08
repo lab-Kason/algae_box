@@ -1,6 +1,5 @@
-"""
-U-Bottom Passive Collection System
-Controls gravity-based algae collection using U-shaped tank bottom
+""" Pump-Based Flow Manifold Collection System
+Controls pump-driven algae sweeping using horizontal slot-cut water knife
 """
 import time
 from typing import Optional
@@ -9,13 +8,16 @@ import config
 
 class CollectionSystem:
     """
-    Controls U-bottom passive collection mechanism:
-    1. Wait for settling (algae roll down U-shape to centerline, slide to drain)
-    2. Open drain valve at back-center (lowest point)
-    3. Collect concentrated algae
-    4. Close drain valve
+    Controls pump-based flow manifold collection mechanism:
+    1. Wait for settling (algae sink to flat bottom)
+    2. Start pump (water flows through slot-cut manifold, creating "water knife")
+    3. Multiple flush passes sweep algae toward back drain
+    4. Stop pump (let algae settle at drain)
+    5. Open drain valve (collect concentrated algae)
+    6. Close drain valve
     
-    No tilting, no mechanical parts - gravity does all the work!
+    Flow: FRONT manifold → BACK drain (unidirectional sweeping)
+    No mechanical scrapers - gentle laminar flow preserves algae integrity
     """
     
     def __init__(self, simulation_mode: bool = None):
@@ -26,18 +28,20 @@ class CollectionSystem:
         if not self.simulation_mode:
             self._init_hardware()
         else:
-            print("🔬 U-bottom collection system initialized in SIMULATION mode")
+            print("🔬 Pump-based flow manifold system initialized in SIMULATION mode")
     
     def _init_hardware(self):
-        """Initialize GPIO pin for drain valve"""
+        """Initialize GPIO pins for pump and drain valve"""
         try:
             # TODO: Initialize GPIO
             # import RPi.GPIO as GPIO
             # GPIO.setmode(GPIO.BCM)
+            # GPIO.setup(config.PUMP_PIN, GPIO.OUT)
             # GPIO.setup(config.DRAIN_VALVE_PIN, GPIO.OUT)
-            # # Start with valve closed (normal operation)
+            # # Start with pump and valve OFF (normal operation)
+            # GPIO.output(config.PUMP_PIN, GPIO.LOW)
             # GPIO.output(config.DRAIN_VALVE_PIN, GPIO.LOW)
-            print("✅ Drain valve hardware initialized")
+            print("✅ Pump and drain valve hardware initialized")
         except Exception as e:
             print(f"❌ Failed to initialize hardware: {e}")
             self.simulation_mode = True
@@ -67,9 +71,10 @@ class CollectionSystem:
         
         self.is_collecting = True
         print("\n" + "="*50)
-        print("🌊 STARTING U-BOTTOM PASSIVE COLLECTION")
-        print(f"   {config.COLLECTION_CYCLES} settle-drain cycles")
-        print(f"   Tank stays stationary - gravity does the work!")
+        print("🌊 STARTING PUMP-BASED FLOW COLLECTION")
+        print(f"   {config.FLUSH_PASSES} flush passes per cycle")
+        print(f"   Flow: FRONT manifold → BACK drain")
+        print(f"   Slot-cut creates uniform 'water knife' effect")
         print("="*50)
         
         try:
@@ -79,19 +84,31 @@ class CollectionSystem:
                 print(f"\n🔄 CYCLE {cycle}/{config.COLLECTION_CYCLES}")
                 print("-" * 50)
                 
-                # PHASE 1: SETTLING - Algae roll down U-shape and slide to drain
-                print(f"   ⏳ Phase 1: Settling (algae roll to centerline & slide to drain)")
-                print(f"      U-depth: {config.U_DEPTH}mm, Slope: {config.LONGITUDINAL_SLOPE_ANGLE}°")
+                # PHASE 1: SETTLING - Algae sink to flat bottom
+                print(f"   ⏳ Phase 1: Settling (algae sink to bottom, pump OFF)")
                 if self.simulation_mode:
                     for i in range(3):
                         time.sleep(1)
                         print(f"      Settling... {i+1}s / {config.SETTLING_TIME}s (fast-forward in sim)")
                 else:
                     time.sleep(config.SETTLING_TIME)
-                print(f"      ✅ Algae concentrated at back-center drain")
+                print(f"      ✅ Algae settled on flat bottom")
                 
-                # PHASE 2: DRAINING - Open drain valve to collect
-                print(f"   💧 Phase 2: Opening drain valve at lowest point...")
+                # PHASE 2: FLUSHING - Multiple passes with pump ON
+                print(f"   💨 Phase 2-{1+config.FLUSH_PASSES}: Flushing ({config.FLUSH_PASSES} passes, pump ON)")
+                for pass_num in range(1, config.FLUSH_PASSES + 1):
+                    print(f"      → Flush pass {pass_num}/{config.FLUSH_PASSES}...")
+                    self._start_pump()
+                    time.sleep(config.FLUSH_TIME_PER_PASS)
+                print(f"      ✅ Algae swept to back drain")
+                
+                # PHASE 3: COLLECTION WAITING - Pump OFF, algae settle at drain
+                print(f"   ⏸️  Phase {2+config.FLUSH_PASSES}: Waiting (pump OFF, algae settle at drain)")
+                self._stop_pump()
+                time.sleep(config.COLLECTION_WAIT_TIME)
+                
+                # PHASE 4: DRAINING - Open drain valve to collect
+                print(f"   💧 Phase {3+config.FLUSH_PASSES}: Opening drain valve...")
                 self._open_drain()
                 time.sleep(config.DRAIN_OPEN_TIME)
                 
@@ -129,6 +146,22 @@ class CollectionSystem:
             }
         finally:
             self.is_collecting = False
+    
+    def _start_pump(self):
+        """Start water pump for flow sweeping"""
+        if not self.simulation_mode:
+            # TODO: GPIO control
+            # GPIO.output(config.PUMP_PIN, GPIO.HIGH)
+            pass
+        print("         🔵 Pump ON - creating water knife curtain")
+    
+    def _stop_pump(self):
+        """Stop water pump"""
+        if not self.simulation_mode:
+            # TODO: GPIO control
+            # GPIO.output(config.PUMP_PIN, GPIO.LOW)
+            pass
+        print("         ⚫ Pump OFF")
     
     def _open_drain(self):
         """Open drain valve to collect algae"""
