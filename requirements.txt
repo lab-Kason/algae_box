@@ -1,0 +1,19 @@
+# Algae Box Backend Requirements
+# Python dependencies for Flask API and database
+
+# Web Framework
+Flask==3.0.0
+flask-cors==4.0.0
+
+# Database
+SQLAlchemy>=2.0.36
+
+# For deployment
+gunicorn==21.2.0
+python-dotenv==1.0.0
+
+# Existing sensor dependencies (keep for hardware integration)
+# These will be installed when deploying to Raspberry Pi
+# Adafruit-Blinka==8.20.0
+# adafruit-circuitpython-mcp3xxx==1.4.13
+# RPi.GPIO==0.7.1
