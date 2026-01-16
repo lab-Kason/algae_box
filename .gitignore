@@ -55,3 +55,4 @@ htmlcov/
 # CSV data files (keep config)
 *.csv
 !example_data.csv
+flutter/
