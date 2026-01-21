@@ -14,11 +14,19 @@ class TurbiditySensor:
     Higher turbidity = more algae in water.
     """
     
-    def __init__(self, simulation_mode: bool = None):
+    def __init__(self, simulation_mode: bool = None, species_params: dict = None):
         self.simulation_mode = simulation_mode if simulation_mode is not None else config.SIMULATION_MODE
         self.start_time = time.time()
-        self.sim_base_turbidity = 10.0  # Starting turbidity for simulation
         self.last_collection_time = None  # Track when collection happened
+        
+        # Use species-specific harvest threshold or default
+        if species_params and 'harvest_turbidity' in species_params:
+            self.harvest_threshold = species_params['harvest_turbidity']
+            # Start simulation at ~30% of harvest threshold
+            self.sim_base_turbidity = self.harvest_threshold * 0.3
+        else:
+            self.harvest_threshold = config.TURBIDITY_HARVEST_THRESHOLD
+            self.sim_base_turbidity = 10.0
         
         if not self.simulation_mode:
             self._init_real_sensor()

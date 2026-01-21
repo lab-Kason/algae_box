@@ -138,6 +138,33 @@ def update_tank(tank_id):
         session.close()
 
 
+@app.route('/api/tanks/<int:tank_id>', methods=['DELETE'])
+def delete_tank(tank_id):
+    """Delete a tank (and all associated data)"""
+    session = db.get_session()
+    
+    try:
+        tank = session.query(Tank).filter_by(id=tank_id).first()
+        if not tank:
+            return jsonify({'success': False, 'error': 'Tank not found'}), 404
+        
+        tank_name = tank.name
+        
+        # Delete tank (cascade will delete all sensor readings, collection events, etc.)
+        session.delete(tank)
+        session.commit()
+        
+        return jsonify({
+            'success': True, 
+            'message': f"Tank '{tank_name}' and all associated data deleted successfully"
+        })
+    except Exception as e:
+        session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        session.close()
+
+
 # ==================== SENSOR ENDPOINTS ====================
 
 @app.route('/api/sensors/current/<int:tank_id>', methods=['GET'])

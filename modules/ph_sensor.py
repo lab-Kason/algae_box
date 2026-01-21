@@ -10,10 +10,15 @@ import config
 class PHSensor:
     """Measures water pH (0-14 scale, 7 is neutral)"""
     
-    def __init__(self, simulation_mode: bool = None):
+    def __init__(self, simulation_mode: bool = None, species_params: dict = None):
         self.simulation_mode = simulation_mode if simulation_mode is not None else config.SIMULATION_MODE
         self.start_time = time.time()
-        self.sim_base_ph = config.PH_OPTIMAL
+        
+        # Use species-specific pH or default
+        if species_params and 'ph_optimal' in species_params:
+            self.sim_base_ph = species_params['ph_optimal']
+        else:
+            self.sim_base_ph = config.PH_OPTIMAL
         
         if not self.simulation_mode:
             self._init_real_sensor()

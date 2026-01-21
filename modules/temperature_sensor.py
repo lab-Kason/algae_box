@@ -10,9 +10,14 @@ import config
 class TemperatureSensor:
     """Measures water temperature in Celsius"""
     
-    def __init__(self, simulation_mode: bool = None):
+    def __init__(self, simulation_mode: bool = None, species_params: dict = None):
         self.simulation_mode = simulation_mode if simulation_mode is not None else config.SIMULATION_MODE
-        self.sim_base_temp = config.TEMP_OPTIMAL
+        
+        # Use species-specific temperature or default
+        if species_params and 'temp_optimal' in species_params:
+            self.sim_base_temp = species_params['temp_optimal']
+        else:
+            self.sim_base_temp = config.TEMP_OPTIMAL
         
         if not self.simulation_mode:
             self._init_real_sensor()
