@@ -3,17 +3,23 @@
 ## 🛒 Complete Bill of Materials (BOM)
 ## Pump-Based Flow Manifold System
 
-Last Updated: January 8, 2026
+Last Updated: January 21, 2026
+
+**Key Changes:**
+- ✅ Updated to **digital I2C sensors** (no ADC needed!)
+- ✅ Easier wiring - all sensors use I2C/1-Wire
+- ✅ Better accuracy for algae cultivation
+- ✅ Plug-and-play compatibility
 
 ---
 
 ## 1. Main Controller
 
 ### Raspberry Pi 4 Model B (4GB) - **$55**
-- **Why:** Sufficient processing power, GPIO pins, runs Python
+- **Why:** Sufficient processing power, I2C/SPI/GPIO pins, runs Python
 - **Alternative:** Raspberry Pi Zero 2 W ($15) - cheaper, lower power, still capable
 - **Supplier:** [Adafruit](https://www.adafruit.com/product/4296), [Amazon](https://www.amazon.com/Raspberry-Model-2019-Quad-Bluetooth/dp/B07TC2BK1X)
-- **Includes:** Quad-core processor, WiFi, Bluetooth, 40 GPIO pins
+- **Includes:** Quad-core processor, WiFi, Bluetooth, 40 GPIO pins, **I2C interface built-in**
 
 ### MicroSD Card (32GB Class 10) - **$10**
 - **Model:** SanDisk Ultra 32GB
@@ -27,68 +33,82 @@ Last Updated: January 8, 2026
 
 ---
 
-## 2. Sensors
+## 2. Sensors (All Digital - No ADC Needed! ✨)
 
-### A. Turbidity Sensor - **$12**
+### A. Turbidity Sensor - **$35**
 
-**Option 1: DFRobot SEN0189 (Recommended)**
-- **Model:** SEN0189 Gravity Analog Turbidity Sensor
-- **Range:** 0-1000 NTU
-- **Output:** 0-4.5V analog
-- **Why:** Affordable, well-documented, Arduino/Pi compatible
-- **Supplier:** [DFRobot](https://www.dfrobot.com/product-1394.html), [Amazon](https://www.amazon.com/DFRobot-Turbidity-Detection-Suspended-Particles/dp/B07FNGY6TT)
-- **Datasheet:** [Link](https://wiki.dfrobot.com/Turbidity_sensor_SKU__SEN0189)
+**Model: DFRobot SEN0554 Gravity I2C Turbidity Sensor** ⭐ RECOMMENDED
+- **Interface:** I2C (direct to Raspberry Pi, no ADC!)
+- **Range:** 0-1000 NTU (perfect for algae: 0-500 NTU)
+- **Accuracy:** ±5% FSD
+- **Output:** Digital (0.001 NTU resolution)
+- **Why:** 
+  - Plug-and-play I2C
+  - No calibration curve needed
+  - Direct digital output
+  - Much better precision than analog sensors
+- **Supplier:** [DFRobot](https://www.dfrobot.com/product-2623.html), [Amazon](https://www.amazon.com/DFRobot-Turbidity-Sensor-Gravity-Compatible/dp/B0BXXX)
+- **Wiring:** Only 4 wires (VCC, GND, SDA, SCL)
+- **Python Library:** Included, very easy to use
 
-**Option 2: TSW-10 Turbidity Sensor - $18**
-- Higher accuracy, industrial grade
-- Supplier: AliExpress, eBay
+**Alternative: Analog Version (if budget tight) - $12**
+- DFRobot SEN0189 (requires MCP3008 ADC)
+- More complex wiring, less accurate
 
-### B. pH Sensor - **$25**
+### B. pH Sensor - **$60**
 
-**Model: DFRobot SEN0161-V2 pH Sensor Kit**
-- **Range:** pH 0-14
-- **Accuracy:** ±0.1 pH @ 25°C
-- **Output:** Analog voltage
-- **Includes:** pH probe, BNC connector, signal conditioning board
-- **Why:** Waterproof probe, pre-calibrated, easy Arduino/Pi interface
-- **Supplier:** [DFRobot](https://www.dfrobot.com/product-1782.html), [Amazon](https://www.amazon.com/DFRobot-Gravity-Analog-Sensor-Arduino/dp/B01ENIXO7E)
-- **Note:** Requires periodic calibration with buffer solutions
+**Model: Atlas Scientific EZO-pH Kit (I2C)** ⭐ RECOMMENDED
+- **Interface:** I2C (direct to Raspberry Pi)
+- **Range:** pH 0.001-14.000
+- **Accuracy:** ±0.002 pH
+- **Features:**
+  - Digital I2C communication
+  - Auto-calibration storage
+  - Temperature compensation
+  - No external ADC needed
+- **Includes:** EZO-pH circuit + probe
+- **Why:** Industrial-grade, lab-quality, drift-resistant, easy Python library
+- **Supplier:** [Atlas Scientific](https://atlas-scientific.com/kits/ph-kit/), [Amazon](https://www.amazon.com/Atlas-Scientific-ENV-SDS-KIT-Gravity-Sensor/dp/)
+- **Wiring:** 4 wires (VCC, GND, SDA, SCL)
+- **Calibration:** Digital via Python (stores in EEPROM)
 
 **pH Calibration Buffer Set (pH 4.0, 7.0, 10.0) - $12**
 - Essential for accurate readings
-- Supplier: Amazon, scientific supply stores
+- One-time setup, stores calibration
 
-### C. Temperature Sensor - **$8**
+**Budget Alternative: DFRobot SEN0161-V2 - $25**
+- Analog output (requires MCP3008 ADC)
+- Less accurate, requires more calibration
+
+### C. Temperature Sensor - **$8** ✅ SAME (Already Perfect)
 
 **Model: DS18B20 Waterproof Digital Temperature Sensor**
+- **Interface:** 1-Wire (single GPIO pin, no ADC!)
 - **Range:** -55°C to +125°C
 - **Accuracy:** ±0.5°C
-- **Interface:** 1-Wire (single data pin)
 - **Cable:** 1m waterproof stainless steel probe
 - **Why:** Waterproof, accurate, widely supported, simple wiring
 - **Supplier:** [Adafruit](https://www.adafruit.com/product/381), [Amazon](https://www.amazon.com/Waterproof-Digital-Temperature-DS18B20-Raspberry/dp/B012C597T0)
+- **Wiring:** 3 wires (VCC, GND, DATA)
 
 **4.7kΩ Pull-up Resistor** (for DS18B20) - **$0.10**
 - Required for 1-Wire protocol
-- Included in resistor kit below
 
 ---
 
 ## 3. Analog-to-Digital Converter (ADC)
 
-### MCP3008 8-Channel 10-Bit ADC - **$4**
+### ~~MCP3008 - NOT NEEDED ANYMORE! ✨~~
 
-**Model: Microchip MCP3008**
-- **Why:** Raspberry Pi doesn't have analog inputs; this converts analog sensor signals to digital
-- **Channels:** 8 (turbidity + pH + 6 spare)
-- **Resolution:** 10-bit (0-1023 values)
-- **Interface:** SPI
-- **Supplier:** [Adafruit](https://www.adafruit.com/product/856), [Amazon](https://www.amazon.com/Waveshare-MCP3008-Raspberry-Interface-Channels/dp/B07WGCWW43)
+**Why removed:**
+- All sensors now use digital I2C or 1-Wire
+- Direct connection to Raspberry Pi
+- No analog conversion needed
+- Simpler wiring, fewer components
 
-**Alternative: ADS1115 16-Bit ADC - $10**
-- Higher resolution (16-bit vs 10-bit)
-- I2C interface
-- Better for precise pH readings
+**If using budget analog sensors:**
+- MCP3008 8-Channel 10-Bit ADC - $4
+- ADS1115 16-Bit ADC - $10 (better for pH)
 
 ---
 
@@ -430,26 +450,88 @@ When you're ready to order, I can provide:
 
 ## 🚀 Recommended Ordering Strategy
 
-### **Phase 1 - Order Now:**
-- Raspberry Pi + accessories
-- Turbidity sensor
-- Temperature sensor  
-- MCP3008 ADC
-- Relay module
-- Solenoid valve
-- **12V DC water pump**
-- **PVC pipe (25mm) + fittings**
-- **Silicone tubing**
-- Basic wiring kit
+### **Phase 1 - Order Now (Core System):**
+- Raspberry Pi 4 + accessories ($75 total)
+- **DS18B20 Temperature sensor** ($8) ✅ Easy - 1-Wire
+- **DFRobot SEN0554 Turbidity sensor** ($35) ✅ Easy - I2C
+- **Atlas Scientific pH sensor** ($60) ✅ Easy - I2C
+- Relay module ($6)
+- 12V solenoid valve ($15)
+- 12V DC water pump ($18)
+- PVC pipe + fittings ($15)
+- Silicone tubing ($8)
+- Basic wiring kit ($12)
 
-**Start coding and testing while waiting for:**
+**Total Phase 1: ~$252**
 
-### **Phase 2 - Order Later:**
-- pH sensor (requires calibration knowledge)
-- PWM speed controller (fine-tune flow after testing)
-- Camera module (for algae ID integration)
-- Mounting hardware (after testing manifold positioning)
-- Rotary tool (for cutting slot in PVC - can also use hacksaw + file)
+**Why this order:**
+- All digital sensors - no ADC needed!
+- Simple I2C wiring - just 4 wires per sensor
+- Can start coding immediately with simulation
+- Proven reliable for algae cultivation
+
+### **Phase 2 - Order Later (Optional Upgrades):**
+- PWM speed controller ($8) - fine-tune flow after testing
+- Camera module ($30) - for algae ID integration
+- Mounting hardware ($10) - after testing manifold positioning
+- Backup sensors ($40) - spare turbidity/pH sensors
+
+---
+
+## 🔌 **Wiring Guide (I2C Sensors)**
+
+### **Super Simple Wiring - All I2C Sensors Share Same Bus!**
+
+```
+Raspberry Pi GPIO Header:
+┌─────────────────────┐
+│ 3.3V  ●●  5V        │  Pin 1 (3.3V) → All sensor VCC
+│ SDA   ●●  5V        │  Pin 3 (SDA)  → All sensor SDA
+│ SCL   ●●  GND       │  Pin 5 (SCL)  → All sensor SCL
+│ GPIO4 ●●  GND       │  Pin 6 (GND)  → All sensor GND
+│  ...                │  Pin 7 (GPIO4) → DS18B20 Data
+└─────────────────────┘
+```
+
+### **Sensor Connections:**
+
+**Turbidity Sensor (DFRobot SEN0554):**
+- VCC → Pi Pin 1 (3.3V)
+- GND → Pi Pin 6 (GND)
+- SDA → Pi Pin 3 (SDA)
+- SCL → Pi Pin 5 (SCL)
+
+**pH Sensor (Atlas Scientific EZO-pH):**
+- VCC → Pi Pin 1 (3.3V)
+- GND → Pi Pin 6 (GND)
+- SDA → Pi Pin 3 (SDA)
+- SCL → Pi Pin 5 (SCL)
+
+**Temperature Sensor (DS18B20):**
+- Red (VCC) → Pi Pin 1 (3.3V)
+- Black (GND) → Pi Pin 6 (GND)
+- Yellow (Data) → Pi Pin 7 (GPIO4)
+- **4.7kΩ resistor** between VCC and Data
+
+**Relay Module (for Pump/Valve):**
+- VCC → Pi Pin 2 (5V)
+- GND → Pi Pin 6 (GND)
+- IN1 → Pi Pin 11 (GPIO17) - Pump control
+- IN2 → Pi Pin 12 (GPIO18) - Valve control
+
+### **I2C Address Summary:**
+- Turbidity: 0x30 (default)
+- pH: 0x63 (default)
+- No address conflicts - just works!
+
+### **Advantages of I2C Sensors:**
+✅ Only 4 wires per sensor (VCC, GND, SDA, SCL)
+✅ All sensors share same SDA/SCL bus
+✅ No ADC needed - direct digital reading
+✅ Better accuracy than analog
+✅ Auto-calibration storage in sensor EEPROM
+✅ Python libraries included
+✅ Plug-and-play - less soldering
 
 ---
 

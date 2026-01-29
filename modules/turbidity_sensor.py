@@ -34,23 +34,25 @@ class TurbiditySensor:
             print("🔬 Turbidity sensor initialized in SIMULATION mode")
     
     def _init_real_sensor(self):
-        """Initialize real hardware sensor (when you get it)"""
+        """Initialize real hardware sensor - DFRobot SEN0554 I2C"""
         try:
-            # TODO: Initialize ADC and sensor pin
-            # Example for MCP3008:
-            # import busio
-            # import digitalio
-            # import board
-            # import adafruit_mcp3xxx.mcp3008 as MCP
-            # from adafruit_mcp3xxx.analog_in import AnalogIn
-            # 
-            # spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
-            # cs = digitalio.DigitalInOut(board.D5)
-            # mcp = MCP.MCP3008(spi, cs)
-            # self.channel = AnalogIn(mcp, MCP.P0)
-            print("✅ Real turbidity sensor initialized")
+            # DFRobot SEN0554 Gravity I2C Turbidity Sensor
+            # I2C Address: 0x30 (default)
+            # Install: pip3 install smbus2
+            
+            import smbus2
+            self.i2c_bus = smbus2.SMBus(1)  # I2C bus 1 on Raspberry Pi
+            self.i2c_address = 0x30  # DFRobot SEN0554 default address
+            
+            # Test sensor connection
+            self.i2c_bus.read_byte(self.i2c_address)
+            print("✅ DFRobot SEN0554 I2C turbidity sensor initialized")
+            print(f"   I2C Address: 0x{self.i2c_address:02x}")
+            
         except Exception as e:
-            print(f"❌ Failed to initialize real sensor: {e}")
+            print(f"❌ Failed to initialize I2C turbidity sensor: {e}")
+            print("   Make sure sensor is connected to I2C bus")
+            print("   Run: sudo i2cdetect -y 1")
             print("   Falling back to simulation mode")
             self.simulation_mode = True
     
