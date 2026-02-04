@@ -21,7 +21,8 @@ const char* API_URL = "https://labkason.pythonanywhere.com/api/sensors/reading";
 const int TANK_ID = 1;
 
 // Streamlit URL (where users will be directed)
-const char* STREAMLIT_URL = "https://algae-box.streamlit.app/?tank=1";
+// Change TANK_ID above and this URL for each tank's ESP32
+const char* STREAMLIT_URL = "https://algaebox-rdmdjyaytxgplld4gkgxcl.streamlit.app/?tank=1";
 
 // OLED Display (SSD1306 128x64)
 #define SCREEN_WIDTH 128
