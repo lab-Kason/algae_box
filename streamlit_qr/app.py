@@ -126,6 +126,66 @@ def main():
     if tank:
         st.markdown(f"### Tank: **{tank['name']}** ({tank['algae_type']})")
         st.caption(f"Volume: {tank['volume_liters']}L | Status: {tank['status']}")
+        
+        # Tank Management in Sidebar
+        with st.sidebar:
+            st.markdown("---")
+            st.subheader("⚙️ Tank Settings")
+            
+            # Edit Tank Info
+            with st.expander("✏️ Edit Tank Info"):
+                with st.form("edit_tank"):
+                    new_name = st.text_input("Tank Name", value=tank['name'])
+                    species_list = fetch_species()
+                    species_names = [s['name'] for s in species_list] if species_list else ["Spirulina", "Chlorella", "Dunaliella", "Haematococcus"]
+                    current_index = species_names.index(tank['algae_type']) if tank['algae_type'] in species_names else 0
+                    new_algae = st.selectbox("Algae Type", species_names, index=current_index)
+                    new_volume = st.number_input("Volume (Liters)", min_value=1.0, value=float(tank['volume_liters']))
+                    new_status = st.selectbox("Status", ["active", "inactive", "maintenance"], 
+                                              index=["active", "inactive", "maintenance"].index(tank.get('status', 'active')))
+                    
+                    if st.form_submit_button("💾 Save Changes"):
+                        try:
+                            response = requests.put(f"{BACKEND_URL}/api/tanks/{tank_id}", json={
+                                "name": new_name,
+                                "algae_type": new_algae,
+                                "volume_liters": new_volume,
+                                "status": new_status
+                            }, timeout=10)
+                            if response.status_code == 200:
+                                st.success("✅ Tank updated!")
+                                st.rerun()
+                            else:
+                                st.error(f"Failed: {response.text}")
+                        except Exception as e:
+                            st.error(f"Error: {e}")
+            
+            # Clear Sensor History
+            with st.expander("🗑️ Clear Data"):
+                st.warning("⚠️ This will delete all sensor history for this tank!")
+                if st.button("🗑️ Clear Sensor History", type="secondary"):
+                    try:
+                        response = requests.delete(f"{BACKEND_URL}/api/sensors/history/{tank_id}", timeout=10)
+                        if response.status_code == 200:
+                            st.success("✅ Sensor history cleared!")
+                            st.rerun()
+                        else:
+                            st.error(f"Failed: {response.text}")
+                    except Exception as e:
+                        st.error(f"Error: {e}")
+                
+                st.markdown("---")
+                st.error("🚨 Delete this tank completely?")
+                if st.button("❌ Delete Tank", type="secondary"):
+                    try:
+                        response = requests.delete(f"{BACKEND_URL}/api/tanks/{tank_id}", timeout=10)
+                        if response.status_code == 200:
+                            st.success("✅ Tank deleted!")
+                            st.rerun()
+                        else:
+                            st.error(f"Failed: {response.text}")
+                    except Exception as e:
+                        st.error(f"Error: {e}")
     else:
         st.warning(f"Tank {tank_id} not found. Create a tank first or check backend connection.")
         

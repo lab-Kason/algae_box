@@ -109,6 +109,47 @@ def create_tank():
         session.close()
 
 
+@app.route('/api/tanks/<int:tank_id>', methods=['PUT'])
+def update_tank(tank_id):
+    """Update tank information"""
+    data = request.get_json()
+    if not data:
+        return jsonify({'success': False, 'error': 'No data provided'}), 400
+
+    session = db.get_session()
+    try:
+        tank = session.query(Tank).filter_by(id=tank_id).first()
+        if not tank:
+            return jsonify({'success': False, 'error': 'Tank not found'}), 404
+
+        # Update fields if provided
+        if 'name' in data:
+            tank.name = data['name']
+        if 'algae_type' in data:
+            tank.algae_type = data['algae_type']
+        if 'volume_liters' in data:
+            tank.volume_liters = data['volume_liters']
+        if 'status' in data:
+            tank.status = data['status']
+        if 'notes' in data:
+            tank.notes = data['notes']
+
+        session.commit()
+
+        result = {
+            'id': tank.id,
+            'name': tank.name,
+            'algae_type': tank.algae_type,
+            'volume_liters': tank.volume_liters,
+            'status': tank.status,
+            'created_at': tank.created_at.isoformat(),
+            'notes': tank.notes
+        }
+        return jsonify({'success': True, 'tank': result})
+    finally:
+        session.close()
+
+
 @app.route('/api/tanks/<int:tank_id>', methods=['DELETE'])
 def delete_tank(tank_id):
     """Delete tank and all associated data"""
@@ -207,6 +248,47 @@ def post_sensor_reading():
     except Exception as e:
         session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        session.close()
+
+
+@app.route('/api/sensors/history/<int:tank_id>', methods=['GET'])
+def get_sensor_history(tank_id):
+    """Get sensor history for charting"""
+    hours = request.args.get('hours', 24, type=int)
+    
+    session = db.get_session()
+    try:
+        cutoff = datetime.utcnow() - timedelta(hours=hours)
+        readings = session.query(SensorReading)\
+                      .filter(SensorReading.tank_id == tank_id)\
+                      .filter(SensorReading.timestamp >= cutoff)\
+                      .order_by(SensorReading.timestamp)\
+                      .all()
+        
+        result = [{
+            'timestamp': r.timestamp.isoformat(),
+            'ph': r.ph,
+            'temperature_c': r.temperature_c,
+            'turbidity_ntu': r.turbidity_ntu
+        } for r in readings]
+        
+        return jsonify({'success': True, 'readings': result})
+    finally:
+        session.close()
+
+
+@app.route('/api/sensors/history/<int:tank_id>', methods=['DELETE'])
+def clear_sensor_history(tank_id):
+    """Clear all sensor history for a tank"""
+    session = db.get_session()
+    try:
+        deleted_count = session.query(SensorReading).filter_by(tank_id=tank_id).delete()
+        session.commit()
+        return jsonify({
+            'success': True, 
+            'message': f'Deleted {deleted_count} sensor readings for tank {tank_id}'
+        })
     finally:
         session.close()
 
