@@ -12,7 +12,7 @@ import os
 Base = declarative_base()
 
 # Database file path
-DB_PATH = 'algae_box.db'
+DB_PATH = '/home/labKason/algae_box.db'
 DATABASE_URL = f'sqlite:///{DB_PATH}'
 
 

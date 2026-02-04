@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "author": "Algae Box",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-esp32-s3-devkitc-1", "id": "esp", "top": -10, "left": -20, "attrs": {} },
+    { "type": "wokwi-potentiometer", "id": "pot1", "top": 200, "left": -160, "attrs": { "label": "Turbidity" } },
+    { "type": "wokwi-potentiometer", "id": "pot2", "top": 200, "left": 20, "attrs": { "label": "pH" } },
+    { "type": "wokwi-potentiometer", "id": "pot3", "top": 200, "left": 200, "attrs": { "label": "Temp" } }
+  ],
+  "connections": [
+    ["pot1:VCC", "esp:3V3", "red"],
+    ["pot1:GND", "esp:GND", "black"],
+    ["pot1:SIG", "esp:4", "green"],
+
+    ["pot2:VCC", "esp:3V3", "red"],
+    ["pot2:GND", "esp:GND", "black"],
+    ["pot2:SIG", "esp:5", "green"],
+
+    ["pot3:VCC", "esp:3V3", "red"],
+    ["pot3:GND", "esp:GND", "black"],
+    ["pot3:SIG", "esp:6", "green"]
+  ]
+}
