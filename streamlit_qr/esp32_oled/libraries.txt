@@ -1,0 +1,7 @@
+# Libraries needed in Wokwi (add via Library Manager)
+# Or for real Arduino IDE, install via Library Manager
+
+ArduinoJson
+Adafruit GFX Library
+Adafruit SSD1306
+QRCode
