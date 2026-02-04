@@ -104,6 +104,21 @@ def get_status_color(is_safe):
 def main():
     # Header
     st.title("🌿 Algae Box Monitor")
+    st.caption(f"Monitoring Tank ID: {tank_id}")
+    
+    # Connection status
+    with st.sidebar:
+        st.subheader("🔌 Connection Status")
+        try:
+            response = requests.get(f"{BACKEND_URL}/api/tanks/{tank_id}", timeout=5)
+            if response.status_code == 200:
+                st.success("✅ Backend Connected")
+            else:
+                st.warning(f"⚠️ Backend returned: {response.status_code}")
+        except requests.exceptions.Timeout:
+            st.error("❌ Backend Timeout")
+        except Exception as e:
+            st.error(f"❌ Connection Error: {type(e).__name__}")
     
     # Fetch tank info
     tank = fetch_tank_info(tank_id)
@@ -112,7 +127,7 @@ def main():
         st.markdown(f"### Tank: **{tank['name']}** ({tank['algae_type']})")
         st.caption(f"Volume: {tank['volume_liters']}L | Status: {tank['status']}")
     else:
-        st.warning(f"Tank {tank_id} not found. Create a tank first.")
+        st.warning(f"Tank {tank_id} not found. Create a tank first or check backend connection.")
         
         # Tank creation form
         with st.expander("➕ Create New Tank"):
