@@ -17,3 +17,10 @@ python-dotenv==1.0.0
 # Adafruit-Blinka==8.20.0
 # adafruit-circuitpython-mcp3xxx==1.4.13
 # RPi.GPIO==0.7.1
+
+# --------------------------------------------------
+# Additional packages useful for simulations/visualisation
+numpy>=1.24.0
+pyvista>=0.50.0
+vtk>=9.0.0
+# --------------------------------------------------

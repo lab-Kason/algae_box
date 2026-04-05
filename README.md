@@ -99,6 +99,7 @@ algae_box/
 │   └── collection_system.py    # Auto-shovel control
 ├── data/
 │   └── algae_log.csv           # Sensor data logs
+├── simulations/                # CFD/flow demo scripts & generated files
 ├── PROJECT_PLAN.md             # Detailed project plan
 └── README.md                   # This file
 ```
