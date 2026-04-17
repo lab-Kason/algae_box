@@ -1,1 +1,0 @@
-I am now building a 3d model by using blender. To use the blender for demonstrating the algae tank. First, build a 20 L perfect square . Second, 
