@@ -160,10 +160,55 @@ git push -u origin main
 
 ---
 
-## 8 — Notes & next steps
+## 8 — Restore CFD folders on Mac from git-tracked artifacts
+This repository now includes a trimmed CFD package under:
+- `portable_artifacts/CfdOF_case/`
+- `portable_artifacts/CfdOF_meshCase/`
+
+Use the helper script to rebuild `CfdOF/case` and `CfdOF/meshCase` after clone:
+
+```bash
+cd ~/Projects/algae_box
+chmod +x restore_case_on_mac.sh
+./restore_case_on_mac.sh
+```
+
+Optional:
+
+```bash
+# show what would happen without writing files
+./restore_case_on_mac.sh --dry-run
+
+# overwrite without creating backups
+./restore_case_on_mac.sh --no-backup
+```
+
+---
+
+## 9 — GitHub Desktop workflow on Mac (recover everything)
+1. Install GitHub Desktop on macOS and sign in to your GitHub account.
+2. Click **File -> Clone repository...**
+3. Choose repository: `lab-Kason/algae_box`
+4. Choose local path, for example: `/Users/<you>/Projects/algae_box`
+5. Click **Clone**.
+6. Open Terminal in that folder and run:
+
+```bash
+cd /Users/<you>/Projects/algae_box
+chmod +x restore_case_on_mac.sh
+./restore_case_on_mac.sh
+```
+
+After this step, you will have:
+- `CfdOF/case`
+- `CfdOF/meshCase`
+
+Then continue with ParaView/OpenFOAM as documented above.
+
+---
+
+## 10 — Notes & next steps
 - If you want to run full OpenFOAM natively (no Docker), we can prepare a Homebrew-based install list, but expect platform-specific troubleshooting.
 - For heavy HPC or longer CFD runs consider moving the compute to a Linux VM or remote cluster and use VS Code Remote SSH for editing.
 
 ---
-
-If you'd like, I will now commit this file to the repo and attempt to push it. If you want me to push, please confirm that the current workspace git remote is ready (or I can attempt the push and report errors).
