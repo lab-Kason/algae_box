@@ -1,0 +1,78 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2312                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : _9a9aeb73-20260127 OPENFOAM=2312 patch=260127 version=2312
+Arch   : "LSB;label=32;scalar=64"
+Exec   : gmshToFoam gmsh/FluidVolume_Geometry.msh
+Date   : May 14 2026
+Time   : 18:48:21
+Host   : DESKTOP-4DCV8M4
+PID    : 1128
+I/O    : uncollated
+Case   : /mnt/c/Users/admin/CfdOF/meshCase
+nProcs : 1
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 5, maxFileModificationPolls 20)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+Starting to read mesh format at line 2
+Read format version 2.2  ascii 0
+
+Starting to read physical names at line 5
+Physical names:5
+    Surface 2	patch_0_0
+    Surface 3	patch_1_0
+    Surface 4	patch_2_0
+    Surface 5	patch_3_0
+    Volume 1	Internal
+
+Starting to read points at line 13
+Vertices to be read: 80125
+Vertices read:80125
+
+Starting to read cells at line 80141
+Cells to be read: 478244
+
+Mapping region 2 to Foam patch 0
+Mapping region 5 to Foam patch 1
+Mapping region 3 to Foam patch 2
+Mapping region 4 to Foam patch 3
+Mapping region 1 to Foam cellZone 0
+Cells:
+    total:439764
+    hex  :0
+    prism:0
+    pyr  :0
+    tet  :439764
+
+CellZones:
+Zone	Size
+    0	439764
+
+Patch 0 gets name patch_0_0
+Patch 1 gets name patch_3_0
+Patch 2 gets name patch_1_0
+Patch 3 gets name patch_2_0
+
+--> FOAM Warning : 
+    From Foam::polyMesh::polyMesh(const Foam::IOobject&, Foam::pointField&&, const Foam::cellShapeList&, const Foam::faceListList&, const Foam::wordList&, const Foam::wordList&, const Foam::word&, const Foam::word&, const Foam::wordList&, bool)
+    in file meshes/polyMesh/polyMeshFromShapeMesh.C at line 640
+    Found 38480 undefined faces in mesh; adding to default patch defaultFaces
+Finding faces of patch 0
+Finding faces of patch 1
+Finding faces of patch 2
+Finding faces of patch 3
+
+FaceZones:
+Zone	Size
+
+Writing zone 0 to cellZone Internal and cellSet
+End
+

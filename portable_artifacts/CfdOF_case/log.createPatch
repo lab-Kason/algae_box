@@ -1,0 +1,85 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2312                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : _9a9aeb73-20260127 OPENFOAM=2312 patch=260127 version=2312
+Arch   : "LSB;label=32;scalar=64"
+Exec   : createPatch -overwrite
+Date   : May 14 2026
+Time   : 18:48:27
+Host   : DESKTOP-4DCV8M4
+PID    : 1847
+I/O    : uncollated
+Case   : /mnt/c/Users/admin/CfdOF/case
+nProcs : 1
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 5, maxFileModificationPolls 20)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+Create mesh for time = 0
+
+Reading "system/createPatchDict"
+
+
+
+Adding patches to mesh region0
+
+Adding new patch outlet(top) from 
+{
+    type            patch;
+    nFaces          0;
+    startFace       0;
+}
+
+Adding new patch wall(tank_vertical) from 
+{
+    type            wall;
+    nFaces          0;
+    startFace       0;
+}
+
+Adding new patch inlet(ring) from 
+{
+    type            patch;
+    nFaces          0;
+    startFace       0;
+}
+
+Adding new patch defaultFaces from 
+{
+    type            wall;
+    nFaces          0;
+    startFace       0;
+}
+
+
+
+
+Repatching mesh region0
+
+Moving faces from patch patch_1_0 to patch 4
+Moving faces from patch patch_2_0 to patch 5
+Moving faces from patch patch_3_0 to patch 6
+Moving faces from patch patch_0_0 to patch 7
+Doing topology modification to order faces.
+
+Not synchronising points.
+
+Removing patches with no faces in them.
+
+Removed zero-sized patch patch_0_0 type patch at position 0
+Removed zero-sized patch patch_3_0 type patch at position 1
+Removed zero-sized patch patch_1_0 type patch at position 2
+Removed zero-sized patch patch_2_0 type patch at position 3
+
+
+Writing repatched mesh region0 to 0
+
+End
+

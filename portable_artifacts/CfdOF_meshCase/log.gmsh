@@ -1,0 +1,136 @@
+Info    : Running 'gmsh.exe -nt 16 - gmsh/FluidVolume_Geometry.geo' [Gmsh 5.0.0-git-23c47b0e6, 1 node, max. 16 threads]
+Info    : Started on Thu May 14 18:48:18 2026
+Info    : Reading 'gmsh/FluidVolume_Geometry.geo'...
+Info    : Reading 'gmsh/FluidVolume_Geometry.brep'...
+Info    : Snapping geometry point 3 to curve (distance = 2.82991e-07)
+Info    : Snapping geometry point 3 to curve (distance = 5.65982e-07)
+Info    : Snapping geometry point 3 to curve (distance = 2.82991e-07)
+Info    : Snapping geometry point 4 to curve (distance = 3.662e-08)
+Info    : Snapping geometry point 4 to curve (distance = 3.662e-08)
+Info    : Snapping geometry point 4 to curve (distance = 3.6617e-08)
+Info    : Done reading 'gmsh/FluidVolume_Geometry.brep'
+Info    : Meshing 1D...
+Info    : [  0%] Meshing curve 2 (Line)
+Info    : [  0%] Meshing curve 3 (Circle)
+Info    : [  0%] Meshing curve 6 (BSpline)
+Info    : [  0%] Meshing curve 9 (Circle)
+Info    : [  0%] Meshing curve 10 (Circle)
+Info    : [  0%] Meshing curve 7 (Circle)
+Info    : [  0%] Meshing curve 19 (Circle)
+Info    : [ 20%] Meshing curve 20 (Circle)
+Info    : [  0%] Meshing curve 11 (Circle)
+Info    : [  0%] Meshing curve 4 (BSpline)
+Info    : [ 20%] Meshing curve 22 (BSpline)
+Info    : [  0%] Meshing curve 12 (Circle)
+Info    : [  0%] Meshing curve 14 (Circle)
+Info    : [  0%] Meshing curve 8 (Line)
+Info    : [  0%] Meshing curve 15 (Line)
+Info    : [ 20%] Meshing curve 24 (Line)
+Info    : [  0%] Meshing curve 17 (Circle)
+Info    : [ 20%] Meshing curve 26 (Line)
+Info    : [ 20%] Meshing curve 28 (Circle)
+Info    : [  0%] Meshing curve 5 (Circle)
+Info    : [ 20%] Meshing curve 21 (Line)
+Info    : [ 20%] Meshing curve 30 (Circle)
+Info    : [ 20%] Meshing curve 23 (BSpline)
+Info    : [  0%] Meshing curve 16 (BSpline)
+Info    : [ 20%] Meshing curve 25 (Circle)
+Info    : [  0%] Meshing curve 18 (Circle)
+Info    : [ 20%] Meshing curve 27 (Circle)
+Info    : [  0%] Meshing curve 1 (Circle)
+Info    : [ 20%] Meshing curve 29 (Line)
+Info    : [ 20%] Meshing curve 31 (Circle)
+Info    : [  0%] Meshing curve 13 (Line)
+Info    : [ 20%] Meshing curve 32 (Circle)
+Info    : [ 20%] Meshing curve 33 (Line)
+Info    : Done meshing 1D (Wall 0.00710297s, CPU 0.015625s)
+Info    : Meshing 2D...
+Info    : [  0%] Meshing surface 12 (Cylinder, MeshAdapt)
+Info    : [  0%] Meshing surface 7 (Cylinder, MeshAdapt)
+Info    : [  0%] Meshing surface 10 (Cylinder, MeshAdapt)
+Info    : [  0%] Meshing surface 11 (Cone, MeshAdapt)
+Info    : [  0%] Meshing surface 9 (Plane, Delaunay)
+Info    : [  0%] Meshing surface 3 (Cylinder, MeshAdapt)
+Info    : [  0%] Meshing surface 8 (Unknown, MeshAdapt)
+Info    : [  0%] Meshing surface 4 (Torus, MeshAdapt)
+Info    : [  0%] Meshing surface 2 (Torus, MeshAdapt)
+Info    : [  0%] Meshing surface 5 (Plane, Delaunay)
+Info    : [  0%] Meshing surface 14 (Plane, Delaunay)
+Info    : [  0%] Meshing surface 1 (Cone, MeshAdapt)
+Info    : [  0%] Meshing surface 13 (Plane, Delaunay)
+Info    : [  0%] Meshing surface 6 (Cone, MeshAdapt)
+Info    : [  0%] Meshing surface 16 (Plane, Delaunay)
+Info    : [  0%] Meshing surface 15 (Cylinder, MeshAdapt)
+Info    : [  0%] Meshing surface 17 (Plane, Delaunay)
+Info    : [  0%] Meshing surface 18 (Cylinder, MeshAdapt)
+Info    : Done meshing 2D (Wall 0.575497s, CPU 0.953125s)
+Info    : Meshing 3D...
+Info    : 3D Meshing 1 volume with 1 connected component
+Info    : Input mesh hash 2eb0da21819cf52f
+Info    : Creating an empty mesh with 19240 vertices
+Info    : Initialization of tet. mesh
+Info    : Delaunay of      19236 points on   8 threads - mesh.nvert: 4         
+Info    : Recovering 14 missing facet(s)
+Info    : Recover Delaunay
+Info    : 1 out of 2 volumes will be refined
+Info    : All volumes of the BRep were found and colorized accordingly
+Info    : Computing interpolated mesh sizes...
+Info    : Done computing interpolated mesh sizes
+Info    : Delaunay of      49896 points on   8 threads - mesh.nvert: 19240     
+Info    :           -      42033 points filtered
+Info    :           =       7863 points added
+Info    : Computing interpolated mesh sizes...
+Info    : Done computing interpolated mesh sizes
+Info    : Delaunay of      63499 points on   8 threads - mesh.nvert: 27103     
+Info    :           -      47008 points filtered
+Info    :           =      16491 points added
+Info    : Computing interpolated mesh sizes...
+Info    : Done computing interpolated mesh sizes
+Info    : Delaunay of      66686 points on   8 threads - mesh.nvert: 43594     
+Info    :           -      45741 points filtered
+Info    :           =      20945 points added
+Info    : Computing interpolated mesh sizes...
+Info    : Done computing interpolated mesh sizes
+Info    : Delaunay of      34929 points on   8 threads - mesh.nvert: 64539     
+Info    :           -      22675 points filtered
+Info    :           =      12254 points added
+Info    : Computing interpolated mesh sizes...
+Info    : Done computing interpolated mesh sizes
+Info    : Delaunay of       5512 points on   2 threads - mesh.nvert: 76793     
+Info    :           -       2524 points filtered
+Info    :           =       2988 points added
+Info    : Computing interpolated mesh sizes...
+Info    : Done computing interpolated mesh sizes
+Info    : Delaunay of        453 points on   1 threads - mesh.nvert: 79781     
+Info    :           -        122 points filtered
+Info    :           =        331 points added
+Info    : Computing interpolated mesh sizes...
+Info    : Done computing interpolated mesh sizes
+Info    : Delaunay of         16 points on   1 threads - mesh.nvert: 80112     
+Info    :           -          3 points filtered
+Info    :           =         13 points added
+Info    : Computing interpolated mesh sizes...
+Info    : Done computing interpolated mesh sizes
+Info    : Improving      15669 tet. on  16 thrd (S & ER)
+Info    : Improving        824 tet. on  16 thrd (S & ER)
+Info    : Improving        393 tet. on  16 thrd (S & ER)
+Info    : Improving        368 tet. on  16 thrd (S & ER)
+Info    : Improving        366 tet. on  16 thrd (S & ER)
+Info    : Improving        365 tet. on  16 thrd (GSC)
+Info    : Improving        263 tet. on  16 thrd (S & ER)
+Info    : Improving        261 tet. on  16 thrd (S & ER)
+Info    : Improving        261 tet. on  16 thrd (GSC)
+Info    :  	Final tet. mesh contains 549865 tetrahedra
+Info    :  	Final tet. mesh contains 80125 vertices
+Info    : tEmptyMesh  	 = 	    0.041
+Info    : tVerifyBnd  	 = 	    0.016
+Info    : tBndRecovery	 = 	    0.085
+Info    : tConvertMesh	 = 	    0.000
+Info    : tRefine     	 = 	    0.293
+Info    : tOptimize   	 = 	    0.095
+Info    : Done meshing 3D (Wall 0.584906s, CPU 1.48438s)
+Info    : 80125 nodes 479347 elements
+Info    : Writing 'gmsh/FluidVolume_Geometry.msh'...
+Info    : Done writing 'gmsh/FluidVolume_Geometry.msh'
+Info    : Done reading 'gmsh/FluidVolume_Geometry.geo'
+Info    : Stopped on Thu May 14 18:48:20 2026 (From start: Wall 1.88372s, CPU 3.17188s)

@@ -10,6 +10,10 @@ This document lists required applications, VS Code extensions, files to transfer
 - Postprocessing script: `paraview_postprocess.py` available to load the `.foam` case and generate slices + streamlines in ParaView.
 - Other useful code & data: `modules/`, `simulations/`, `streamlit_qr/`, `data/algae_log.csv`.
 
+In-repo portable CFD package now included (for direct git transfer to Mac):
+- `portable_artifacts/CfdOF_case/` (trimmed runtime case: `0`, `constant`, `system`, processor `constant` + final `2000` timestep, logs, run scripts)
+- `portable_artifacts/CfdOF_meshCase/` (meshCase export from Gmsh/OpenFOAM)
+
 Recommended files to copy to mac:
 - `CfdOF/` (entire folder: meshCase, case, Any `.foam` files)
 - `paraview_postprocess.py`
