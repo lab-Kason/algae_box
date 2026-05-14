@@ -229,6 +229,9 @@ Reassemble on the receiving machine:
 chmod +x restore_whatsapp_bundle.sh
 ./restore_whatsapp_bundle.sh
 
+# if the parts are in a different folder, pass that folder
+./restore_whatsapp_bundle.sh ~/Downloads/whatsapp_bundle
+
 # manual fallback
 cat algae_box_portable.tar.gz.part* > algae_box_portable.tar.gz
 tar -xzf algae_box_portable.tar.gz
