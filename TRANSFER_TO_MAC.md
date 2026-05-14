@@ -212,9 +212,24 @@ If GitHub is unavailable, use the split archive stored in:
 - `whatsapp_bundle/algae_box_portable.tar.gz.part01`
 - `whatsapp_bundle/algae_box_portable.tar.gz.part02`
 
+Also send this restore helper if you want one-click unpacking:
+- `restore_whatsapp_bundle.sh`
+
+If you want the exact minimal send list, send these 3 items:
+1. `whatsapp_bundle/algae_box_portable.tar.gz.part01`
+2. `whatsapp_bundle/algae_box_portable.tar.gz.part02`
+3. `restore_whatsapp_bundle.sh`
+
+If you also want the instructions file, add:
+4. `whatsapp_bundle/README.md`
+
 Reassemble on the receiving machine:
 
 ```bash
+chmod +x restore_whatsapp_bundle.sh
+./restore_whatsapp_bundle.sh
+
+# manual fallback
 cat algae_box_portable.tar.gz.part* > algae_box_portable.tar.gz
 tar -xzf algae_box_portable.tar.gz
 ```
