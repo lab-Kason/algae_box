@@ -207,7 +207,23 @@ Then continue with ParaView/OpenFOAM as documented above.
 
 ---
 
-## 10 — Notes & next steps
+## 10 — WhatsApp fallback bundle
+If GitHub is unavailable, use the split archive stored in:
+- `whatsapp_bundle/algae_box_portable.tar.gz.part01`
+- `whatsapp_bundle/algae_box_portable.tar.gz.part02`
+
+Reassemble on the receiving machine:
+
+```bash
+cat algae_box_portable.tar.gz.part* > algae_box_portable.tar.gz
+tar -xzf algae_box_portable.tar.gz
+```
+
+Send `part01` first, then `part02`.
+
+---
+
+## 11 — Notes & next steps
 - If you want to run full OpenFOAM natively (no Docker), we can prepare a Homebrew-based install list, but expect platform-specific troubleshooting.
 - For heavy HPC or longer CFD runs consider moving the compute to a Linux VM or remote cluster and use VS Code Remote SSH for editing.
 
