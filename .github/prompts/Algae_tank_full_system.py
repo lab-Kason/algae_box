@@ -2,37 +2,41 @@ import FreeCAD as App
 import Part
 
 def create_full_system_cfd_domain():
-    doc = App.newDocument("Algae_Tank_Full_System")
+    # 建立新文件
+    doc = App.newDocument("Algae_Tank_Full_System_V2")
 
     # ==========================================
-    # 1. PARAMETERS (in mm)
+    # 1. 系統參數設定 PARAMETERS (單位: mm)
     # ==========================================
-    # Tank Parameters
+    # 主缸 (Tank Parameters)
     neck_r = 55.0 / 2.0
     neck_h = 50.0
     shoulder_h = 80.0
     main_r = 270.0 / 2.0
     main_h = 300.0
     
-    # Aeration Ring Parameters
+    # 充氣環 (Aeration Ring Parameters)
     ring_major_r = 75.0
     ring_minor_r = 6.0
     ring_z_height = neck_h + 40.0
     
-    # Valve Parameters
+    # 閥門及連接管 (Valve & Connection Parameters)
     valve_r = neck_r
     valve_h = 60.0
+    cyclone_offset_x = 150.0  # 旋流器向旁邊平移 150mm，避開主缸正下方
     
-    # Hydrocyclone Parameters
+    # 水力旋流器 (Hydrocyclone Parameters)
     cylindrical_section_r = 60.0
     cylindrical_section_h = 100.0
     conical_section_h = 150.0
-    underflow_r = 10.0          # The bottom tip (apex) where algae drops out
-    feed_inlet_r = 15.0         # Tangential side pipe
-    feed_inlet_length = 100.0
+    underflow_r = 10.0          # 底部微藻排出口 (Apex)
+    feed_inlet_r = 15.0         # 切向入口半徑
+    
+    # 精確計算 Y 軸偏移，確保喉管完美切入旋流器外壁
+    cyclone_offset_y = -(cylindrical_section_r - feed_inlet_r) # -45.0
 
     # ==========================================
-    # 2. BUILD THE TANK (Z = 0 and going UP)
+    # 2. 建立主缸 BUILD THE TANK (由 Z = 0 向上起)
     # ==========================================
     tank_neck = Part.makeCylinder(neck_r, neck_h)
     tank_shoulder = Part.makeCone(neck_r, main_r, shoulder_h, App.Vector(0, 0, neck_h), App.Vector(0, 0, 1))
@@ -40,7 +44,7 @@ def create_full_system_cfd_domain():
     
     fluid_domain = tank_neck.fuse(tank_shoulder).fuse(tank_main)
 
-    # 3. Cut out the Aeration Ring
+    # 3. 挖走充氣環實體 Cut out the Aeration Ring
     feed_pipe_h = (neck_h + shoulder_h + main_h) - ring_z_height + 10.0
     ring = Part.makeTorus(ring_major_r, ring_minor_r, App.Vector(0, 0, ring_z_height), App.Vector(0, 0, 1))
     feed_pipe = Part.makeCylinder(ring_minor_r, feed_pipe_h, App.Vector(ring_major_r, 0, ring_z_height), App.Vector(0, 0, 1))
@@ -49,60 +53,57 @@ def create_full_system_cfd_domain():
     fluid_domain = fluid_domain.cut(aeration_hardware)
 
     # ==========================================
-    # 4. BUILD THE VALVE (Z = 0 going DOWN)
+    # 4. 建立底部閥門及橫向喉管 BUILD THE VALVE & HORIZONTAL PIPE
     # ==========================================
-    # Starts at Z=0 and goes down to Z= -60
     z_valve_bottom = -valve_h
+    # 垂直向下的閥門空間
     valve_body = Part.makeCylinder(valve_r, valve_h, App.Vector(0, 0, z_valve_bottom), App.Vector(0, 0, 1))
     
-    fluid_domain = fluid_domain.fuse(valve_body)
+    # 橫向引水喉管 (L型彎管)，將水帶到旋流器。長度加 10mm 確保兩端融合無縫
+    pipe_horizontal = Part.makeCylinder(feed_inlet_r, cyclone_offset_x + 10.0, App.Vector(0, 0, z_valve_bottom + 20.0), App.Vector(1, 0, 0))
+    
+    fluid_domain = fluid_domain.fuse(valve_body).fuse(pipe_horizontal)
 
     # ==========================================
-    # 5. BUILD THE HYDROCYCLONE (Going further down)
+    # 5. 建立水力旋流器 BUILD THE HYDROCYCLONE (於平移位置)
     # ==========================================
-    z_cylindrical_bottom = z_valve_bottom - cylindrical_section_h
+    z_cyclone_top = z_valve_bottom + 40.0 
+    z_cylindrical_bottom = z_cyclone_top - cylindrical_section_h
     z_conical_bottom = z_cylindrical_bottom - conical_section_h
 
-    # Cylindrical section (Swirl Chamber)
-    cylindrical_section = Part.makeCylinder(cylindrical_section_r, cylindrical_section_h, App.Vector(0, 0, z_cylindrical_bottom), App.Vector(0, 0, 1))
+    # 圓柱體旋流室 (中心點位於 X=150, Y=-45)
+    cylindrical_section = Part.makeCylinder(cylindrical_section_r, cylindrical_section_h, App.Vector(cyclone_offset_x, cyclone_offset_y, z_cylindrical_bottom), App.Vector(0, 0, 1))
     
-    # Conical section
-    conical_section = Part.makeCone(cylindrical_section_r, underflow_r, conical_section_h, App.Vector(0, 0, z_cylindrical_bottom), App.Vector(0, 0, -1))
+    # 圓錐體部分
+    conical_section = Part.makeCone(cylindrical_section_r, underflow_r, conical_section_h, App.Vector(cyclone_offset_x, cyclone_offset_y, z_cylindrical_bottom), App.Vector(0, 0, -1))
     
-    # Feed inlet (Tangential pipe) shooting out along the X-axis
-    tangential_offset_y = cylindrical_section_r - feed_inlet_r  # Offset to make it tangential
-    feed_inlet = Part.makeCylinder(feed_inlet_r, feed_inlet_length, 
-                                        App.Vector(0, tangential_offset_y, z_valve_bottom - 30.0), 
-                                        App.Vector(1, 0, 0)) # Pointing in +X direction
-    
-    # Fuse cyclone parts to the main domain
-    fluid_domain = fluid_domain.fuse(cylindrical_section).fuse(conical_section).fuse(feed_inlet)
+    # 將旋流器主體融合入整體流體網格
+    fluid_domain = fluid_domain.fuse(cylindrical_section).fuse(conical_section)
 
     # ==========================================
-    # 5.5 BUILD VORTEX FINDER (The Overflow pipe)
+    # 6. 建立溢流管 BUILD VORTEX FINDER (The Overflow pipe)
     # ==========================================
-    # The clean water goes UP through this pipe (Overflow)
+    # 乾淨水會由呢條管向上排出，而家佢獨立於旋流器正上方
     overflow_outer_r = 20.0
-    overflow_inner_r = 16.0  # 4mm thick wall
-    overflow_length = 50.0
+    overflow_inner_r = 16.0  
+    overflow_length = 80.0
     
-    # The Overflow pipe hangs down from the roof (z_valve_bottom)
-    z_vf_bottom = z_valve_bottom - overflow_length
-    vf_outer = Part.makeCylinder(overflow_outer_r, overflow_length, App.Vector(0, 0, z_vf_bottom), App.Vector(0, 0, 1))
-    vf_inner = Part.makeCylinder(overflow_inner_r, overflow_length, App.Vector(0, 0, z_vf_bottom), App.Vector(0, 0, 1))
+    z_vf_bottom = z_cyclone_top - 40.0 # 插入旋流室內部 40mm
+    vf_outer = Part.makeCylinder(overflow_outer_r, overflow_length, App.Vector(cyclone_offset_x, cyclone_offset_y, z_vf_bottom), App.Vector(0, 0, 1))
+    vf_inner = Part.makeCylinder(overflow_inner_r, overflow_length, App.Vector(cyclone_offset_x, cyclone_offset_y, z_vf_bottom), App.Vector(0, 0, 1))
     overflow_wall_hardware = vf_outer.cut(vf_inner)
     
-    # Cut this physical pipe out of our solid water block
+    # 喺流體實體入面挖走呢條實體喉管嘅空間
     fluid_domain = fluid_domain.cut(overflow_wall_hardware)
 
     # ==========================================
-    # 6. CLEANUP & EXPORT
+    # 7. 清理網格及匯出 CLEANUP & EXPORT
     # ==========================================
     fluid_domain = fluid_domain.removeSplitter()
 
     cfd_part = doc.addObject("Part::Feature", "FluidVolume")
     cfd_part.Shape = fluid_domain
-    cfd_part.Label = "Fluid_Domain_Full_System"
+    cfd_part.Label = "Fluid_Domain_Harvesting_Ready"
 
     doc.recompute()
     
@@ -114,4 +115,4 @@ def create_full_system_cfd_domain():
         pass
 
 create_full_system_cfd_domain()
-print("Full System Model successfully generated!")
+print("Harvesting-Ready Full System Model successfully generated!")
