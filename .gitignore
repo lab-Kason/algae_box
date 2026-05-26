@@ -56,3 +56,4 @@ htmlcov/
 *.csv
 !example_data.csv
 flutter/
+*.jitx
