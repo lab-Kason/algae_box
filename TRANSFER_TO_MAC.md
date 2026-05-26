@@ -246,3 +246,26 @@ Send `part01` first, then `part02`.
 - For heavy HPC or longer CFD runs consider moving the compute to a Linux VM or remote cluster and use VS Code Remote SSH for editing.
 
 ---
+
+## 12 — How the Mac workflow fits together
+Use the same project folder on macOS, then move through the pipeline in this order:
+
+1. **FreeCAD**
+  - Open FreeCAD.
+  - Load the macro at `.github/prompts/Algae_tank_full_system.py`.
+  - Run it to generate the fluid-domain model.
+  - If you want the GUI model saved, export it from FreeCAD after the macro finishes.
+
+2. **OpenFOAM**
+  - Restore the case with `./restore_case_on_mac.sh`.
+  - If using Docker, mount `CfdOF/` into the container and run `./Allrun` inside it.
+  - The restored `CfdOF/case/case.foam` file is the convenience entry point for ParaView.
+
+3. **ParaView**
+  - Open `CfdOF/case/case.foam` in ParaView.
+  - Run `paraview_postprocess.py` with `pvpython` or the ParaView Python shell.
+  - That script creates the slice + streamlines view used on Windows.
+
+Practical rule: keep FreeCAD, mesh, solver case, and ParaView all inside the same `algae_box` project folder on the Mac. That keeps paths stable and makes the transfer behave like the Windows setup.
+
+---
