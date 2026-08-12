@@ -1,0 +1,6 @@
+{
+  "operations": [
+    {"operation":"place","place":{"placements":[{"id":"7CnqYp4pRSkYCiQ3WjmsFk","pose":{"center":{"x":31.8132000875473,"y":-22.9467998623848},"angle":270},"side":"top","anchor":null},{"id":"9WGUqmNSqLuwyVY6JfRmNX","pose":{"center":{"x":32.0632000875473,"y":-24.3},"angle":0},"side":"top","anchor":null},{"id":"9AfLa2aAKEjwLvDfiomAuH","pose":{"center":{"x":30.9599999499321,"y":-24.3},"angle":0},"side":"top","anchor":null},{"id":"5F1MzfX9wphyia5oAo3c35","pose":{"center":{"x":31.22,"y":-18.5167996764183},"angle":0},"side":"top","anchor":null},{"id":"3ScRbR5GW76kaQ36jkhebM","pose":{"center":{"x":32.5732001376152,"y":-18.7667996764183},"angle":90},"side":"top","anchor":null},{"id":"C8XDo7oPrgw5Pmd3govgt2","pose":{"center":{"x":32.5732001376152,"y":-17.6635995388031},"angle":90},"side":"top","anchor":null},{"id":"6Kjz1ANUNGfc1izPrwU8dB","pose":{"center":{"x":31.72,"y":-11.953600156307221},"angle":270},"side":"top","anchor":null},{"id":"3QnPPbRBj625eAh4KCjLae","pose":{"center":{"x":31.47,"y":-10.600400018692017},"angle":180},"side":"top","anchor":null},{"id":"DyEVs5YSR3vncHa99n7GxR","pose":{"center":{"x":32.5732001376152,"y":-10.600400018692017},"angle":0},"side":"top","anchor":null}]}}
+  ],
+  "generation": "3JEwn1C4bftkd2PGTXCBaz"
+}

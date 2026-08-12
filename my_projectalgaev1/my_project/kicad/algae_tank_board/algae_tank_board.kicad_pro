@@ -1,0 +1,16 @@
+{
+  "meta": {
+    "version": 1
+  },
+  "project": {
+    "title": "algae_tank_board",
+    "page_layout_descr_file": ""
+  },
+  "schematic": {
+    "legacy_lib_dir": "",
+    "plot_directory": ""
+  },
+  "pcbnew": {
+    "last_paths": {}
+  }
+}
