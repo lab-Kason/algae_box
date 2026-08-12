@@ -1,0 +1,103 @@
+#use-added-syntax(jitx)
+defpackage bioreactor_pcb :
+  import core
+  import jitx
+  import jitx/commands
+  
+  ; JITX standard libraries for generic components
+  import ocdb/utils/defaults
+  import ocdb/utils/landpatterns
+  import ocdb/utils/symbols
+  import ocdb/utils/bundles
+  import ocdb/utils/generic-components
+
+  ; Import standard connectors and power modules
+  import ocdb/components/espressif/esp32-s3-wroom-1
+  import ocdb/components/ti/TCA9548A ; I2C Multiplexer
+  
+pcb-module algae-bioreactor-system :
+  ; 1. Define the Power System (12V Input, 5V for sensors, 3.3V for ESP32)
+  port pwr-12v : power
+  port pwr-5v  : power
+  port pwr-3v3 : power
+  
+  ; Create power jack
+  inst dc-jack : ocdb/components/cui/PJ-102AH/component
+  net (dc-jack.pwr, pwr-12v)
+
+  ; Step down 12V to 5V (Buck Converter)
+  inst buck-5v : ocdb/modules/power/buck-converter(12.0, 5.0)
+  net (buck-5v.vin, pwr-12v)
+  net (buck-5v.vout, pwr-5v)
+
+  ; Step down 5V to 3.3V (LDO)
+  inst ldo-3v3 : ocdb/modules/power/ldo(5.0, 3.3)
+  net (ldo-3v3.vin, pwr-5v)
+  net (ldo-3v3.vout, pwr-3v3)
+
+  ; 2. Define the Brain (ESP32-S3)
+  inst mcu : esp32-s3-wroom-1()
+  net (mcu.power, pwr-3v3)
+  
+  ; 3. Provide an I2C Bus for the whole board
+  net i2c-main (mcu.i2c.sda, mcu.i2c.scl)
+  
+  ; 4. Add the Display (0.96" OLED)
+  inst oled-connector : ocdb/components/jst/XH/component(4) ; 4-pin JST
+  net (oled-connector.p1, pwr-3v3.vcc)
+  net (oled-connector.p2, pwr-3v3.gnd)
+  net (oled-connector.p3, i2c-main.scl)
+  net (oled-connector.p4, i2c-main.sda)
+
+  ; 5. Add Turbidity Sensors via I2C Multiplexer (TCA9548A)
+  inst i2c-mux : component/ti/TCA9548A()
+  net (i2c-mux.power, pwr-3v3)
+  net (i2c-mux.i2c-in, i2c-main) ; Connect MUX to main I2C bus
+
+  ; Create 3 Connectors for Turbidity Sensors (Low, Mid, High)
+  for i in 0 to 3 do :
+    inst turb-conn : ocdb/components/jst/XH/component(4)
+    net (turb-conn.p1, pwr-5v.vcc) ; Turbidity sensors often need 5V
+    net (turb-conn.p2, pwr-5v.gnd)
+    net (turb-conn.p3, i2c-mux.i2c-out[i].scl) # Wire to MUX channel i
+    net (turb-conn.p4, i2c-mux.i2c-out[i].sda)
+
+  ; 6. Add pH Sensor (Direct I2C)
+  inst ph-conn : ocdb/components/jst/XH/component(4)
+  net (ph-conn.p1, pwr-5v.vcc)
+  net (ph-conn.p2, pwr-5v.gnd)
+  net (ph-conn.p3, i2c-main.scl)
+  net (ph-conn.p4, i2c-main.sda)
+
+  ; 7. Add Temperature Sensor (1-Wire with Pull-up resistor)
+  inst temp-conn : ocdb/components/jst/XH/component(3)
+  inst temp-pullup : chip-resistor(4700.0) ; 4.7kΩ pull up
+  net (temp-conn.p1, pwr-3v3.vcc)
+  net (temp-conn.p2, mcu.gpio[4]) ; Data pin to GPIO 4
+  net (temp-conn.p3, pwr-3v3.gnd)
+  
+  net (pwr-3v3.vcc, temp-pullup.p1)
+  net (temp-pullup.p2, mcu.gpio[4]) ; Pull-up data line
+
+  ; 8. Actuators (MOSFETs for 12V Load: Valve, Pump, LED)
+  ; Here we represent the control outputs
+  inst valve-fet : ocdb/modules/power/low-side-switch()
+  net (mcu.gpio[17], valve-fet.gate) ; ESP32 controls the Valve
+  
+  inst pump-fet : ocdb/modules/power/low-side-switch()
+  net (mcu.gpio[18], pump-fet.gate)
+  
+  inst led-fet : ocdb/modules/power/low-side-switch()
+  net (mcu.gpio[19], led-fet.gate) 
+
+; ==========================================
+; Run JITX setup & Generate KiCad outputs
+; ==========================================
+setup-design("algae-bioreactor", "hardware/pcb")
+set-board(ocdb/utils/defaults/default-board(ocdb/manufacturers/jlcpcb/board-rules))
+
+; Set up export to KiCad
+set-export-backend(`kicad)
+
+; Run the main PCB generation
+make-default-board(algae-bioreactor-system)
