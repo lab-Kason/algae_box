@@ -1,0 +1,6 @@
+[
+  {"name":"p2","pins":["ph_afe.r_bot.p2","turb_afe.r_bot.p2","temp_afe.r_bot.p2"],"requires":[]},
+  {"name":"p1","pins":["ph_afe.r_bot.p1","ph_afe.r_top.p2","ph_afe.r_filt.p1"],"requires":[]},
+  {"name":"r_top.p2","pins":["temp_afe.r_top.p2","temp_afe.r_filt.p1","temp_afe.r_bot.p1"],"requires":[]},
+  {"name":"r_bot.p1","pins":["turb_afe.r_bot.p1","turb_afe.r_top.p2","turb_afe.r_filt.p1"],"requires":[]}
+]
