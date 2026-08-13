@@ -5,13 +5,19 @@ from boto3.dynamodb.conditions import Key
 import pandas as pd
 from decimal import Decimal
 
-# ---------- 硬编码 AWS 密钥（直接设置环境变量） ----------
-os.environ['AWS_ACCESS_KEY_ID'] = 'REMOVED_AWS_ACCESS_KEY_ID'
-os.environ['AWS_SECRET_ACCESS_KEY'] = 'REMOVED_AWS_SECRET_ACCESS_KEY'
-os.environ['AWS_DEFAULT_REGION'] = 'ap-southeast-2'
+# ---------- 从 Streamlit Secrets 读取 AWS 凭证 ----------
+# 注意：必须在部署时在 Streamlit Cloud 的 Secrets 中添加以下键值对
+AWS_ACCESS_KEY_ID = st.secrets["AWS_ACCESS_KEY_ID"]
+AWS_SECRET_ACCESS_KEY = st.secrets["AWS_SECRET_ACCESS_KEY"]
+AWS_DEFAULT_REGION = st.secrets["AWS_DEFAULT_REGION"]
+
+# 将密钥注入环境变量，让 boto3 自动读取
+os.environ['AWS_ACCESS_KEY_ID'] = AWS_ACCESS_KEY_ID
+os.environ['AWS_SECRET_ACCESS_KEY'] = AWS_SECRET_ACCESS_KEY
+os.environ['AWS_DEFAULT_REGION'] = AWS_DEFAULT_REGION
 
 # ---------- AWS 配置 ----------
-REGION = "ap-southeast-2"
+REGION = AWS_DEFAULT_REGION
 TABLE_NAME = "TankSensorData"
 
 dynamodb = boto3.resource('dynamodb', region_name=REGION)
@@ -66,7 +72,7 @@ else:
 
 st.markdown("---")
 
-# ---------- 历史趋势（分开绘制） ----------
+# ---------- 历史趋势 ----------
 st.subheader("📈 历史趋势")
 
 n_points = st.slider("显示最近多少条记录", min_value=10, max_value=500, value=100, step=10)
