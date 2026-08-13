@@ -1,9 +1,9 @@
 import os
+import base64
 import streamlit as st
 import boto3
 from boto3.dynamodb.conditions import Key
 import pandas as pd
-import base64
 from decimal import Decimal
 
 # ---------- 从 Streamlit Secrets 读取 AWS 凭证 ----------
@@ -24,72 +24,65 @@ TABLE_NAME = "TankSensorData"
 dynamodb = boto3.resource('dynamodb', region_name=REGION)
 table = dynamodb.Table(TABLE_NAME)
 
-# ---------- 封面页处理（如果未启动则显示封面并阻止后续渲染） ----------
+def get_query_param(name, default=None):
+    value = st.query_params.get(name, default)
+    if isinstance(value, list):
+        return value[0] if value else default
+    return value
+
+
+def set_query_param(name, value):
+    st.query_params[name] = value
+
+
 def show_cover_and_stop():
-        try:
-                img_path = os.path.join(os.path.dirname(__file__), 'assets', 'cover.jpeg')
-                with open(img_path, 'rb') as f:
-                        b64 = base64.b64encode(f.read()).decode('utf-8')
-        except Exception:
-                b64 = ''
+    try:
+        img_path = os.path.join(os.path.dirname(__file__), 'assets', 'cover.jpeg')
+        with open(img_path, 'rb') as f:
+            b64 = base64.b64encode(f.read()).decode('utf-8')
+    except Exception:
+        b64 = ''
 
-        html = """
-        <html>
-        <head>
-        <meta name='viewport' content='width=device-width, initial-scale=1'>
-        <style>
-            html,body{{height:100%;margin:0;}}
-            .cover{{
-                background: #000 url('data:image/jpeg;base64,__B64__') center/cover no-repeat;
-                height:100vh;display:flex;align-items:center;justify-content:center;transition:opacity 0.7s ease;
-            }}
-            .fadeout{{opacity:0;}}
-            .btn{{background:rgba(255,255,255,0.9);border:none;padding:18px 28px;border-radius:10px;font-size:20px;cursor:pointer}}
-        </style>
-        </head>
-        <body>
-            <div id="cover" class="cover">
-                <button id="startBtn" class="btn">Start Monitoring</button>
-            </div>
-            <script>
-                const btn=document.getElementById('startBtn');
-                const cover=document.getElementById('cover');
-                btn.addEventListener('click',()=>{
-                    cover.classList.add('fadeout');
-                    setTimeout(()=>{ window.location.search = '?started=1'; }, 700);
-                });
-            </script>
-        </body>
-        </html>
-        """
-        html = html.replace('__B64__', b64)
-        import streamlit.components.v1 as components
-        components.html(html, height=700, scrolling=False)
-        st.stop()
+    html = """
+    <html>
+    <head>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <style>
+        html,body{{height:100%;margin:0;}}
+        .cover{{
+            background: #000 url('data:image/jpeg;base64,__B64__') center/cover no-repeat;
+            height:100vh;display:flex;align-items:center;justify-content:center;transition:opacity 0.7s ease;
+        }}
+        .fadeout{{opacity:0;}}
+        .btn{{background:rgba(255,255,255,0.9);border:none;padding:18px 28px;border-radius:10px;font-size:20px;cursor:pointer}}
+    </style>
+    </head>
+    <body>
+        <div id="cover" class="cover">
+            <button id="startBtn" class="btn">Start Monitoring</button>
+        </div>
+        <script>
+            const btn=document.getElementById('startBtn');
+            const cover=document.getElementById('cover');
+            btn.addEventListener('click',()=>{
+                cover.classList.add('fadeout');
+                setTimeout(()=>{ window.location.search = '?started=1'; }, 700);
+            });
+        </script>
+    </body>
+    </html>
+    """
+    html = html.replace('__B64__', b64)
+    import streamlit.components.v1 as components
+    components.html(html, height=700, scrolling=False)
+    st.stop()
 
-# 只有在 query param 中有 started=1 时才渲染监控页面
-params = st.experimental_get_query_params()
-if 'started' not in params:
-        show_cover_and_stop()
 
 st.set_page_config(page_title="Algae Box Monitor", layout="wide")
 
-def _safe_get_query_params():
-    try:
-        return st.experimental_get_query_params()
-    except Exception:
-        q = getattr(st, 'query_params', None)
-        if isinstance(q, dict):
-            return q
-        return {}
-
-# 只有在 query param 中有 started=1 时才渲染监控页面
-params = _safe_get_query_params()
-if 'started' not in params:
+tank_id = get_query_param('tank', 'ESP32_Tank_001')
+if get_query_param('started') is None:
     show_cover_and_stop()
-
-# 读取 tank id（从 query params 或使用默认）
-tank_id = params.get('tank', ["ESP32_Tank_001"])[0] if isinstance(params, dict) else "ESP32_Tank_001"
 
 # ---------- 工具函数 ----------
 def convert_decimals(obj):
@@ -167,5 +160,5 @@ tank_list = ["ESP32_Tank_001"]   # 可扩展
 selected = st.selectbox("🔄 切换 Tank", tank_list,
                         index=tank_list.index(tank_id) if tank_id in tank_list else 0)
 if selected != tank_id:
-    st.query_params.tank = selected
+    set_query_param("tank", selected)
     st.rerun()
