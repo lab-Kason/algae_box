@@ -6,6 +6,9 @@ import pandas as pd
 import base64
 from decimal import Decimal
 
+# 页面配置（尽早设置）
+st.set_page_config(page_title="Algae Box Monitor", layout="wide")
+
 # ---------- 从 Streamlit Secrets 读取 AWS 凭证 ----------
 # 注意：必须在部署时在 Streamlit Cloud 的 Secrets 中添加以下键值对
 AWS_ACCESS_KEY_ID = st.secrets["AWS_ACCESS_KEY_ID"]
@@ -68,12 +71,15 @@ def show_cover_and_stop():
         st.stop()
 
 # 只有在 query param 中有 started=1 时才渲染监控页面
-params = st.experimental_get_query_params()
+try:
+    params = st.experimental_get_query_params()
+except Exception:
+    params = {}
 if 'started' not in params:
-        show_cover_and_stop()
+    show_cover_and_stop()
 
-st.set_page_config(page_title="Algae Box Monitor", layout="wide")
-tank_id = st.query_params.get("tank", "ESP32_Tank_001")
+# 读取 tank id（从 query params 或使用默认）
+tank_id = params.get('tank', ["ESP32_Tank_001"])[0]
 
 # ---------- 工具函数 ----------
 def convert_decimals(obj):
