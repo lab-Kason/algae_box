@@ -21,8 +21,11 @@ python-dotenv==1.0.0
 # --------------------------------------------------
 # Additional packages useful for simulations/visualisation
 numpy>=1.24.0
-pyvista>=0.50.0
-vtk>=9.0.0
+# pyvista and vtk are commented out because Streamlit Cloud's Python
+# environment currently does not provide pyvista>=0.50.0. Commented
+# out to allow deployment; re-enable locally if you need 3D visualisation.
+# pyvista>=0.50.0
+# vtk>=9.0.0
 # --------------------------------------------------
 streamlit
 boto3
