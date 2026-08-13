@@ -33,17 +33,17 @@ def show_cover_and_stop():
         except Exception:
                 b64 = ''
 
-        html = f"""
+        html = """
         <html>
         <head>
         <meta name='viewport' content='width=device-width, initial-scale=1'>
         <style>
             html,body{{height:100%;margin:0;}}
             .cover{{
-                background: #000 url('data:image/jpeg;base64,{b64}') center/cover no-repeat;
+                background: #000 url('data:image/jpeg;base64,__B64__') center/cover no-repeat;
                 height:100vh;display:flex;align-items:center;justify-content:center;transition:opacity 0.7s ease;
             }}
-            .fadeout{{opacity:0;}
+            .fadeout{{opacity:0;}}
             .btn{{background:rgba(255,255,255,0.9);border:none;padding:18px 28px;border-radius:10px;font-size:20px;cursor:pointer}}
         </style>
         </head>
@@ -62,6 +62,7 @@ def show_cover_and_stop():
         </body>
         </html>
         """
+        html = html.replace('__B64__', b64)
         import streamlit.components.v1 as components
         components.html(html, height=700, scrolling=False)
         st.stop()
