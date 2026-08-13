@@ -11,17 +11,18 @@ st.set_page_config(page_title="Algae Box Monitor", layout="wide")
 
 # ---------- 从 Streamlit Secrets 读取 AWS 凭证 ----------
 # 注意：必须在部署时在 Streamlit Cloud 的 Secrets 中添加以下键值对
-AWS_ACCESS_KEY_ID = st.secrets["AWS_ACCESS_KEY_ID"]
-AWS_SECRET_ACCESS_KEY = st.secrets["AWS_SECRET_ACCESS_KEY"]
-AWS_DEFAULT_REGION = st.secrets["AWS_DEFAULT_REGION"]
+AWS_ACCESS_KEY_ID = st.secrets.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = st.secrets.get("AWS_SECRET_ACCESS_KEY")
+AWS_DEFAULT_REGION = st.secrets.get("AWS_DEFAULT_REGION")
 
-# 将密钥注入环境变量，让 boto3 自动读取
-os.environ['AWS_ACCESS_KEY_ID'] = AWS_ACCESS_KEY_ID
-os.environ['AWS_SECRET_ACCESS_KEY'] = AWS_SECRET_ACCESS_KEY
-os.environ['AWS_DEFAULT_REGION'] = AWS_DEFAULT_REGION
+if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
+        os.environ['AWS_ACCESS_KEY_ID'] = AWS_ACCESS_KEY_ID
+        os.environ['AWS_SECRET_ACCESS_KEY'] = AWS_SECRET_ACCESS_KEY
+if AWS_DEFAULT_REGION:
+        os.environ['AWS_DEFAULT_REGION'] = AWS_DEFAULT_REGION
 
 # ---------- AWS 配置 ----------
-REGION = AWS_DEFAULT_REGION
+REGION = AWS_DEFAULT_REGION or 'ap-southeast-2'
 TABLE_NAME = "TankSensorData"
 
 dynamodb = boto3.resource('dynamodb', region_name=REGION)
@@ -41,13 +42,14 @@ def show_cover_and_stop():
         <head>
         <meta name='viewport' content='width=device-width, initial-scale=1'>
         <style>
-            html,body{{height:100%;margin:0;}}
-            .cover{{
+            html,body{height:100%;margin:0;}
+            .cover{
                 background: #000 url('data:image/jpeg;base64,__B64__') center/cover no-repeat;
-                height:100vh;display:flex;align-items:center;justify-content:center;transition:opacity 0.7s ease;
-            }}
-            .fadeout{{opacity:0;}}
-            .btn{{background:rgba(255,255,255,0.9);border:none;padding:18px 28px;border-radius:10px;font-size:20px;cursor:pointer}}
+                height:100vh;display:flex;align-items:center;justify-content:center;transition:opacity 0.8s ease, transform 0.8s ease;
+            }
+            .fadeout{opacity:0;transform:scale(0.98);}
+            .btn{background:rgba(255,255,255,0.95);border:none;padding:24px 40px;border-radius:14px;font-size:28px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,0.3)}
+            @media (max-width:600px){ .btn{font-size:20px;padding:18px 28px} }
         </style>
         </head>
         <body>
@@ -59,7 +61,13 @@ def show_cover_and_stop():
                 const cover=document.getElementById('cover');
                 btn.addEventListener('click',()=>{
                     cover.classList.add('fadeout');
-                    setTimeout(()=>{ window.location.search = '?started=1'; }, 700);
+                    setTimeout(()=>{
+                        try{
+                            window.top.location.href = window.top.location.href.split('?')[0] + '?started=1';
+                        }catch(e){
+                            window.parent.location.href = window.parent.location.href.split('?')[0] + '?started=1';
+                        }
+                    }, 800);
                 });
             </script>
         </body>
@@ -67,42 +75,19 @@ def show_cover_and_stop():
         """
         html = html.replace('__B64__', b64)
         import streamlit.components.v1 as components
-        components.html(html, height=700, scrolling=False)
+        components.html(html, height=900, scrolling=False)
         st.stop()
 
 # 只有在 query param 中有 started=1 时才渲染监控页面
 try:
-    params = st.experimental_get_query_params()
+        params = st.experimental_get_query_params()
 except Exception:
-    params = {}
+        params = {}
 if 'started' not in params:
-    show_cover_and_stop()
+        show_cover_and_stop()
 
 # 读取 tank id（从 query params 或使用默认）
 tank_id = params.get('tank', ["ESP32_Tank_001"])[0]
-
-# ---------- 工具函数 ----------
-def convert_decimals(obj):
-    if isinstance(obj, list):
-        return [convert_decimals(i) for i in obj]
-    elif isinstance(obj, dict):
-        return {k: convert_decimals(v) for k, v in obj.items()}
-    elif isinstance(obj, Decimal):
-        return float(obj)
-    return obj
-
-def get_latest(device_id):
-    resp = table.query(
-        KeyConditionExpression=Key('device_id').eq(device_id),
-        Limit=1,
-        ScanIndexForward=False
-    )
-    items = resp.get('Items', [])
-    return convert_decimals(items[0]) if items else None
-
-def get_last_n(device_id, n=100):
-    resp = table.query(
-        KeyConditionExpression=Key('device_id').eq(device_id),
         Limit=n,
         ScanIndexForward=False
     )
