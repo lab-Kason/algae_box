@@ -73,7 +73,23 @@ if 'started' not in params:
         show_cover_and_stop()
 
 st.set_page_config(page_title="Algae Box Monitor", layout="wide")
-tank_id = st.query_params.get("tank", "ESP32_Tank_001")
+
+def _safe_get_query_params():
+    try:
+        return st.experimental_get_query_params()
+    except Exception:
+        q = getattr(st, 'query_params', None)
+        if isinstance(q, dict):
+            return q
+        return {}
+
+# 只有在 query param 中有 started=1 时才渲染监控页面
+params = _safe_get_query_params()
+if 'started' not in params:
+    show_cover_and_stop()
+
+# 读取 tank id（从 query params 或使用默认）
+tank_id = params.get('tank', ["ESP32_Tank_001"])[0] if isinstance(params, dict) else "ESP32_Tank_001"
 
 # ---------- 工具函数 ----------
 def convert_decimals(obj):
